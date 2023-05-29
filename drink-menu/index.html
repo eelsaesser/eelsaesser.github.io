@@ -13,18 +13,20 @@
   <body>
     <main id="app">
       <section class="py-5 text-center container">
-        <h1 class="fw-light mb-4">Drink Menu</h1>
-        <p class="lead text-body-secondary">
-          Here at 7603 Westminster, we strive to bring you an unparalleled
-          drinking experience. Each of our cocktails is precision crafted with
-          top shelf ingredients. From the classics to fresh, innovative recipes,
-          there is something for everyone. Cheers.
-        </p>
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h1 class="fw-light mb-4">Drink Menu</h1>
+          <p class="lead text-body-secondary">
+            Here at 7603 Westminster, we strive to bring you an unparalleled
+            drinking experience. Each of our cocktails is precision crafted with
+            top shelf ingredients. From the classics to fresh, innovative recipes,
+            there is something for everyone. Cheers.
+          </p>
+        </div>
       </section>
 
       <div class="bg-body-tertiary">
         <div class="container">
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 pb-3">
+          <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3 pb-3">
             <div class="col">
               <div class="card">
                 <div class="card-body">
@@ -62,7 +64,7 @@
   createApp({
     data() {
       return {
-        message: "Hello Vue!",
+        drinks: [],
       };
     },
   }).mount("#app");
