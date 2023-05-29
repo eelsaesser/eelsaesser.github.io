@@ -13,33 +13,32 @@
   <body>
     <main id="app">
       <section class="py-5 text-center container">
-        <div class="col-lg-6 col-md-8 mx-auto">
+        <div class="col-lg-6 col-md-8 col-sm-4 mx-auto">
           <h1 class="fw-light mb-4">Drink Menu</h1>
           <p class="lead text-body-secondary">
             Here at 7603 Westminster, we strive to bring you an unparalleled
             drinking experience. Each of our cocktails is precision crafted with
-            top shelf ingredients. From the classics to fresh, innovative recipes,
-            there is something for everyone. Cheers.
+            top shelf ingredients. From the classics to fresh, innovative
+            recipes, there is something for everyone. Cheers.
           </p>
         </div>
       </section>
 
       <div class="bg-body-tertiary">
         <div class="container">
-          <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3 pb-3">
-            <div class="col">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-auto">
-                      <img
-                        width="150"
-                        src="https://assets.bonappetit.com/photos/57acc14e53e63daf11a4d9b6/1:1/w_2560%2Cc_limit/whiskey-sour.jpg"
-                      />
-                    </div>
-                    <div class="col">
-                      <h5 class="card-title">Whiskey Sour</h5>
-                      <p class="card-text">A classic cocktail</p>
+          <div class="col-lg-6 col-md-8 col-sm-4 mx-auto">
+            <div class="row row-cols-1 g-3 pb-3">
+              <div class="col" v-for="drink in drinks">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-auto">
+                        <img width="120" :src="drink.imageUrl" />
+                      </div>
+                      <div class="col">
+                        <h3 class="fw-light card-title">{{ drink.name }}</h3>
+                        <p class="lead card-text">{{ drink.description }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -64,7 +63,14 @@
   createApp({
     data() {
       return {
-        drinks: [],
+        drinks: [
+          {
+            name: "Whiskey Sour",
+            description: "Bourbon, lemon juice, demarara syrup, egg white",
+            imageUrl:
+              "https://www.liquor.com/thmb/6WtVdTd2kWYfI06d_wzmntoPf1k=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/whiskey-sour-720x720-primary-v2-4fc831b613964da5a19cdbfda917d7df.jpg",
+          },
+        ],
       };
     },
   }).mount("#app");
