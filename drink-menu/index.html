@@ -12,34 +12,28 @@
   </head>
   <body>
     <main id="app">
-      <section class="py-5 text-center container">
-        <div class="col-lg-6 col-md-8 col-sm-4 mx-auto">
-          <h1 class="fw-light mb-4">Drink Menu</h1>
-          <p class="lead text-body-secondary">
-            Here at 7603 Westminster, we strive to bring you an unparalleled
-            drinking experience. Each of our cocktails is precision crafted with
-            top shelf ingredients. From the classics to fresh, innovative
-            recipes, there is something for everyone. Cheers.
-          </p>
-        </div>
+      <section class="py-5 px-3 text-center">
+        <h1 class="mb-4 fs-1">Drink Menu</h1>
+        <p class="lead text-body-secondary fs-2">
+          Here at 7603 Westminster, we strive to bring you an unparalleled
+          drinking experience. Each of our cocktails is precision crafted with
+          top shelf ingredients. From the classics to fresh, innovative recipes,
+          there is something for everyone. Cheers.
+        </p>
       </section>
 
-      <div class="bg-body-tertiary">
-        <div class="container">
-          <div class="col-lg-6 col-md-8 col-sm-4 mx-auto">
-            <div class="row row-cols-1 g-3 pb-3">
-              <div class="col" v-for="drink in drinks">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-auto">
-                        <img width="120" :src="drink.imageUrl" />
-                      </div>
-                      <div class="col">
-                        <h3 class="fw-light card-title">{{ drink.name }}</h3>
-                        <p class="lead card-text">{{ drink.description }}</p>
-                      </div>
-                    </div>
+      <div class="bg-body-tertiary px-3">
+        <div class="row row-cols-1 g-3 pb-3">
+          <div class="col" v-for="drink in drinks">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-auto">
+                    <img width="150" :src="drink.imageUrl" />
+                  </div>
+                  <div class="col">
+                    <h3 class="card-title fs-1">{{ drink.name }}</h3>
+                    <p class="lead card-text fs-2">{{ drink.description }}</p>
                   </div>
                 </div>
               </div>
