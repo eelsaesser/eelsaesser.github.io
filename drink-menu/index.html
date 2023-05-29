@@ -14,8 +14,8 @@
   <body>
     <main id="app">
       <section class="py-5 px-3 text-center">
-        <h1 class="mb-4 fs-1">Drink Menu</h1>
-        <p class="lead text-body-secondary fs-2">
+        <h1 class="fw-light mb-4">Drink Menu</h1>
+        <p class="lead text-body-secondary">
           Here at 7603 Westminster, we strive to bring you an unparalleled
           drinking experience. Each of our cocktails is precision crafted with
           top shelf ingredients. From the classics to fresh, innovative recipes,
@@ -30,11 +30,11 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-auto">
-                    <img width="150" :src="drink.imageUrl" />
+                    <img width="100" :src="drink.imageUrl" />
                   </div>
                   <div class="col">
-                    <h3 class="card-title fs-1">{{ drink.name }}</h3>
-                    <p class="lead card-text fs-2">{{ drink.description }}</p>
+                    <h3 class="card-title fw-light">{{ drink.name }}</h3>
+                    <p class="lead card-text">{{ drink.description }}</p>
                   </div>
                 </div>
               </div>
