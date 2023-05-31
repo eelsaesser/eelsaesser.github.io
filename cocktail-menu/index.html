@@ -15,47 +15,44 @@
     <main id="app">
       <section class="py-5 px-3 text-center">
         <h1 class="fw-light mb-4" style="font-family: Papyrus">Cocktails</h1>
-        <p class="lead text-body-secondary">
+        <p class="lead text-body-secondary mb-0">
           At 7603 Westminster, our cocktails are precision crafted with top
           shelf ingredients. From the classics to fresh, innovative recipes,
           there is something for everyone. Cheers.
         </p>
       </section>
 
-      <div class="bg-body-tertiary px-2">
-        <div class="row row-cols-1 g-3 pb-3 text-center">
-          <div class="col-6">
-            <label for="catgories">Category</label>
-            <select
-              id="catgories"
-              class="form-control mx-2"
-              style="display: inline-block; width: auto"
-              v-model="selectedCategory"
-            >
-              <option value="all">All</option>
-              <option value="after-dinner">After dinner</option>
-              <option value="bitter">Bitter</option>
-              <option value="classic">Classic</option>
-              <option value="featured">Featured</option>
-              <option value="sour">Sour</option>
-            </select>
-          </div>
-          <div class="col-6">
-            <label for="catgories">Base spirit</label>
-            <select
-              id="spirits"
-              class="form-control mx-2"
-              style="display: inline-block; width: auto"
-              v-model="selectedSpirit"
-            >
-              <option value="all">All</option>
-              <option value="bourbon">Bourbon</option>
-              <option value="gin">Gin</option>
-              <option value="mezcal">Mezcal</option>
-              <option value="rum">Rum</option>
-            </select>
-          </div>
-        </div>
+      <div class="bg-body-tertiary px-2 pt-2">
+        <table style="margin: auto" class="mb-2">
+          <tr>
+            <td style="vertical-align: middle; text-align: right">Category</td>
+            <td>
+              <select class="form-control mx-2" v-model="selectedCategory">
+                <option value="all">All</option>
+                <option value="after-dinner">After dinner</option>
+                <option value="bitter">Bitter</option>
+                <option value="classic">Classic</option>
+                <option value="featured">Featured</option>
+                <option value="sour">Sour</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; text-align: right">
+              Base spirit
+            </td>
+            <td>
+              <select class="form-control mx-2" v-model="selectedSpirit">
+                <option value="all">All</option>
+                <option value="bourbon">Bourbon</option>
+                <option value="gin">Gin</option>
+                <option value="mezcal">Mezcal</option>
+                <option value="rum">Rum</option>
+                <option value="rye">Rye</option>
+              </select>
+            </td>
+          </tr>
+        </table>
         <div class="row row-cols-1 g-3 pb-3">
           <div class="col text-center" v-if="!filteredDrinks.length">
             No results.
@@ -112,17 +109,33 @@
           },
           {
             name: "Rum Strawberry Basil Smash",
-            description: "Jamaican rum, lemon juice, demarara syrup, strawberry, basil",
+            description:
+              "Jamaican rum, lemon juice, demarara syrup, strawberry, basil",
             tags: ["featured", "sour"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/strawberry-basil-smash.jpg",
           },
           {
             name: "Spicy Mezcal Margarita",
-            description: "Mezcal, Cointreau, lime juice, honey, habanero, tajín",
+            description:
+              "Mezcal, Cointreau, lime juice, honey, habanero, tajín",
             tags: ["featured", "sour"],
             spirit: "mezcal",
             imageUrl: "/cocktail-menu/img/spicy-mezcal-margarita.jpg",
+          },
+          {
+            name: "Sazerac",
+            description: "Rye, cognac, Pernod, Peychaud's, Angostura, simple syrup",
+            tags: ["classic", "after-dinner"],
+            spirit: "rye",
+            imageUrl: "/cocktail-menu/img/sazerac.jpg",
+          },
+          {
+            name: "Eastside Gimlet",
+            description: "Gin, lime juice, cucumber, mint, simple syrup",
+            tags: ["featured", "sour"],
+            spirit: "gin",
+            imageUrl: "/cocktail-menu/img/eastside-gimlet.jpg",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
