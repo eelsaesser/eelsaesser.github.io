@@ -13,7 +13,7 @@
   </head>
   <body>
     <main id="app">
-      <section class="py-5 px-3 text-center">
+      <section class="py-5 px-3 text-center container">
         <h1 class="fw-light mb-4" style="font-family: Papyrus">Cocktails</h1>
         <p class="lead text-body-secondary mb-0">
           At 7603 Westminster, our cocktails are precision crafted with top
@@ -22,7 +22,7 @@
         </p>
       </section>
 
-      <div class="bg-body-tertiary px-2 pt-2">
+      <div class="bg-body-tertiary px-2 pt-2 container">
         <table style="margin: auto" class="mb-2">
           <tr>
             <td style="vertical-align: middle; text-align: right">Category</td>
@@ -34,6 +34,7 @@
                 <option value="classic">Classic</option>
                 <option value="featured">Featured</option>
                 <option value="sour">Sour</option>
+                <option value="tiki">Tiki</option>
               </select>
             </td>
           </tr>
@@ -96,7 +97,7 @@
           {
             name: "Whiskey Sour",
             description: "Bourbon, lemon juice, demarara syrup, egg white",
-            tags: ["featured", "sour", "classic"],
+            tags: ["sour", "classic"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/whiskey-sour.jpg",
           },
@@ -125,7 +126,8 @@
           },
           {
             name: "Sazerac",
-            description: "Rye, cognac, Pernod, Peychaud's, Angostura, simple syrup",
+            description:
+              "Rye, cognac, Pernod, Peychaud's, Angostura, simple syrup",
             tags: ["classic", "after-dinner"],
             spirit: "rye",
             imageUrl: "/cocktail-menu/img/sazerac.jpg",
@@ -136,6 +138,14 @@
             tags: ["featured", "sour"],
             spirit: "gin",
             imageUrl: "/cocktail-menu/img/eastside-gimlet.jpg",
+          },
+          {
+            name: "Mai Tai",
+            description:
+              "Rum, orange curaçao, lime juice, pineapple juice, orgeat, simple syrup",
+            tags: ["featured", "classic", "sour", "tiki"],
+            spirit: "rum",
+            imageUrl: "/cocktail-menu/img/mai-tai.jpg",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
