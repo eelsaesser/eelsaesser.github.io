@@ -45,6 +45,7 @@
             <td>
               <select class="form-control mx-2" v-model="selectedSpirit">
                 <option value="all">All</option>
+                <option value="amaretto">Amaretto</option>
                 <option value="bourbon">Bourbon</option>
                 <option value="gin">Gin</option>
                 <option value="mezcal">Mezcal</option>
@@ -60,7 +61,20 @@
           </div>
           <div class="col" v-for="drink in filteredDrinks">
             <div class="card">
-              <div class="card-body">
+              <span
+                v-if="outOfStock(drink)"
+                style="
+                  position: absolute;
+                  top: 50px;
+                  left: 22px;
+                  color: white;
+                "
+                >Out of stock</span
+              >
+              <div
+                class="card-body"
+                :style="{opacity: outOfStock(drink) ? 0.5 : 1}"
+              >
                 <div class="row align-items-center">
                   <div class="col-auto">
                     <img width="100" :src="drink.imageUrl" />
@@ -93,6 +107,7 @@
       return {
         selectedCategory: "featured",
         selectedSpirit: "all",
+        outOfStockIngredients: ["basil"],
         drinks: [
           {
             name: "Whiskey Sour",
@@ -169,6 +184,13 @@
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/man-o-war.gif",
           },
+          {
+            name: "Amaretto Sour",
+            description: "Disaronno, bourbon, lemon juice, egg white",
+            tags: ["sour", "after-dinner"],
+            spirit: "amaretto",
+            imageUrl: "/cocktail-menu/img/whiskey-sour.jpg",
+          },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
     },
@@ -180,6 +202,16 @@
               d.tags.indexOf(this.selectedCategory) > -1) &&
             (this.selectedSpirit === "all" || d.spirit === this.selectedSpirit)
         );
+      },
+    },
+    methods: {
+      outOfStock(drink) {
+        for (const ingredient of this.outOfStockIngredients) {
+          if (drink.description.toLowerCase().indexOf(ingredient) > -1) {
+            return true;
+          }
+        }
+        return false;
       },
     },
   }).mount("#app");
