@@ -52,6 +52,7 @@
                 <option value="mezcal">Mezcal</option>
                 <option value="rum">Rum</option>
                 <option value="rye">Rye</option>
+                <option value="tequila">Tequila</option>
               </select>
             </td>
           </tr>
@@ -90,6 +91,11 @@
           </div>
         </div>
       </div>
+      <footer>
+        <p class="text-center text-body-secondary pt-2">
+          © 2023 | Please drink responsibly
+        </p>
+      </footer>
     </main>
 
     <script
@@ -112,7 +118,7 @@
         drinks: [
           {
             name: "Whiskey Sour",
-            description: "Bourbon, lemon juice, demarara syrup, egg white",
+            description: "Bourbon, lemon juice, egg white",
             tags: ["sour", "classic"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/whiskey-sour.jpg",
@@ -127,7 +133,7 @@
           {
             name: "Rum Strawberry Basil Smash",
             description:
-              "Jamaican rum, lemon juice, demarara syrup, strawberry, basil",
+              "Jamaican rum, lemon juice, strawberry, basil",
             tags: ["featured", "sour"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/strawberry-basil-smash.jpg",
@@ -143,14 +149,14 @@
           {
             name: "Sazerac",
             description:
-              "Rye, cognac, Pernod, Peychaud's, Angostura, simple syrup",
-            tags: ["classic", "after-dinner"],
+              "Rye, cognac, Pernod, Peychaud's, Angostura",
+            tags: ["featured", "classic", "after-dinner"],
             spirit: "rye",
             imageUrl: "/cocktail-menu/img/sazerac.jpg",
           },
           {
             name: "Eastside Gimlet",
-            description: "Gin, lime juice, cucumber, mint, simple syrup",
+            description: "Gin, lime juice, cucumber, mint",
             tags: ["featured", "sour"],
             spirit: "gin",
             imageUrl: "/cocktail-menu/img/eastside-gimlet.jpg",
@@ -158,7 +164,7 @@
           {
             name: "Mai Tai",
             description:
-              "Rum, curaçao, lime juice, pineapple juice, orgeat, simple syrup",
+              "Rum, curaçao, lime juice, pineapple juice, orgeat",
             tags: ["featured", "classic", "sour", "tiki"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/mai-tai.jpg",
@@ -166,24 +172,17 @@
           {
             name: "Old Fashioned",
             description:
-              "Bourbon, Angostura aromatic and orange bitters, demarara syrup",
-            tags: ["classic"],
+              "Bourbon, Angostura aromatic and orange bitters",
+            tags: ["featured", "classic"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/old-fashioned.jpg",
           },
           {
             name: "Enzoni",
-            description: "Gin, Campari, grapes, lemon juice, simple syrup",
+            description: "Gin, Campari, grapes, lemon juice",
             tags: ["featured", "bitter"],
             spirit: "gin",
             imageUrl: "/cocktail-menu/img/enzoni.jpg",
-          },
-          {
-            name: "Man o' War",
-            description: "Bourbon, curaçao, lemon juice, sweet vermouth",
-            tags: ["sour"],
-            spirit: "bourbon",
-            imageUrl: "/cocktail-menu/img/man-o-war.gif",
           },
           {
             name: "Amaretto Sour",
@@ -191,6 +190,41 @@
             tags: ["sour", "after-dinner"],
             spirit: "amaretto",
             imageUrl: "/cocktail-menu/img/whiskey-sour.jpg",
+          },
+          {
+            name: "Gold Rush",
+            description: "Bourbon, lemon juice, honey",
+            tags: ["sour", "featured"],
+            spirit: "bourbon",
+            imageUrl: "/cocktail-menu/img/gold-rush.jpg",
+          },
+          {
+            name: "Strawberry Daiquiri",
+            description: "White rum, lime juice, strawberry",
+            tags: ["sour", "featured", "classic"],
+            spirit: "rum",
+            imageUrl: "/cocktail-menu/img/strawberry-daiquiri.jpg",
+          },
+          {
+            name: "Whiskey Smash",
+            description: "Bourbon, lemon juice, mint",
+            tags: ["sour", "featured"],
+            spirit: "bourbon",
+            imageUrl: "/cocktail-menu/img/whiskey-smash.png",
+          },
+          {
+            name: "Manhattan",
+            description: "Rye, sweet vermouth, Angostura",
+            tags: ["classic"],
+            spirit: "rye",
+            imageUrl: "/cocktail-menu/img/manhattan.png",
+          },
+          {
+            name: "Margarita",
+            description: "Tequila, Cointreau, lime juice (spicy, cucumber, or pineapple available by request)",
+            tags: ["classic", "sour"],
+            spirit: "tequila",
+            imageUrl: "/cocktail-menu/img/margarita.png",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
