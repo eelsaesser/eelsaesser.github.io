@@ -114,7 +114,7 @@
       return {
         selectedCategory: "featured",
         selectedSpirit: "all",
-        outOfStockIngredients: ["basil"],
+        outOfStockIngredients: [],
         drinks: [
           {
             name: "Whiskey Sour",
@@ -150,7 +150,7 @@
             name: "Sazerac",
             description:
               "Rye, cognac, Pernod, Peychaud's, Angostura",
-            tags: ["featured", "classic", "after-dinner"],
+            tags: ["featured", "classic", "after-dinner", "bitter"],
             spirit: "rye",
             imageUrl: "/cocktail-menu/img/sazerac.jpg",
           },
@@ -173,7 +173,7 @@
             name: "Old Fashioned",
             description:
               "Bourbon, Angostura aromatic and orange bitters",
-            tags: ["featured", "classic"],
+            tags: ["featured", "classic", "bitter"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/old-fashioned.jpg",
           },
@@ -217,7 +217,7 @@
             description: "Rye, sweet vermouth, Angostura",
             tags: ["classic"],
             spirit: "rye",
-            imageUrl: "/cocktail-menu/img/manhattan.png",
+            imageUrl: "/cocktail-menu/img/manhattan.jpg",
           },
           {
             name: "Margarita",
@@ -231,7 +231,42 @@
             description: "Bourbon, crème de cassis, lemon juice",
             tags: ["featured", "sour"],
             spirit: "bourbon",
-            imageUrl: "/cocktail-menu/img/bourbon-renewal.png",
+            imageUrl: "/cocktail-menu/img/bourbon-renewal.jpg",
+          },
+          {
+            name: "Painkiller",
+            description: "Dark and aged rum, pineapple juice, orange juice, coconut cream, nutmeg",
+            tags: ["featured", "tiki"],
+            spirit: "rum",
+            imageUrl: "/cocktail-menu/img/painkiller.jpg",
+          },
+          {
+            name: "Port of Spain",
+            description: "Mezcal, Angostura, lime juice, orgeat",
+            tags: ["bitter", "after-dinner"],
+            spirit: "mezcal",
+            imageUrl: "/cocktail-menu/img/port-of-spain.jpg",
+          },
+          {
+            name: "Army and Navy",
+            description: "Gin, lemon juice, orgeat, Angostura",
+            tags: ["sour", "featured"],
+            spirit: "gin",
+            imageUrl: "/cocktail-menu/img/army-navy.jpg",
+          },
+          {
+            name: "El Diablo",
+            description: "Tequila, crème de cassis, lime juice, ginger beer",
+            tags: ["sour"],
+            spirit: "tequila",
+            imageUrl: "/cocktail-menu/img/el-diablo.jpg",
+          },
+          {
+            name: "Sidecar",
+            description: "Cognac, Cointreau, lemon juice, sugar rim",
+            tags: ["sour", "classic"],
+            spirit: "cognac",
+            imageUrl: "/cocktail-menu/img/sidecar.jpg",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
