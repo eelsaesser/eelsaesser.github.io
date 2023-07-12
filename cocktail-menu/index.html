@@ -114,7 +114,7 @@
       return {
         selectedCategory: "featured",
         selectedSpirit: "all",
-        outOfStockIngredients: [],
+        outOfStockIngredients: ["grapes"],
         drinks: [
           {
             name: "Whiskey Sour",
@@ -134,7 +134,7 @@
             name: "Rum Strawberry Basil Smash",
             description:
               "Jamaican rum, lemon juice, strawberry, basil",
-            tags: ["featured", "sour"],
+            tags: ["sour"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/strawberry-basil-smash.jpg",
           },
@@ -281,6 +281,13 @@
             tags: ["sour", "featured"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/division-bell.jpg",
+          },
+          {
+            name: "Queen's Park Swizzle",
+            description: "Rum, lime juice, mint, Agostura",
+            tags: ["sour", "featured"],
+            spirit: "rum",
+            imageUrl: "/cocktail-menu/img/queens-park-swizzle.jpg",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
