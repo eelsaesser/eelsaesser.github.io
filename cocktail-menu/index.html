@@ -3,19 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cocktail Menu</title>
+    <title>Cocktails by Evan</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
       crossorigin="anonymous"
     />
-    <link rel="icon" type="image/png" sizes="32x32" href="/cocktail-menu/img/favicon.png">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/cocktail-menu/img/favicon.png"
+    />
   </head>
   <body>
     <main id="app">
       <section class="py-5 px-3 text-center container">
-        <h1 class="fw-light mb-4" style="font-family: Papyrus">Cocktails</h1>
+        <h1 class="fw-light mb-4" style="font-family: Papyrus">
+          Cocktails by Evan
+        </h1>
         <p class="lead text-body-secondary mb-0">
           At 7603 Westminster, our cocktails are precision crafted with top
           shelf ingredients. From the classics to fresh, innovative recipes,
@@ -50,6 +57,7 @@
                 <option value="bourbon">Bourbon</option>
                 <option value="gin">Gin</option>
                 <option value="mezcal">Mezcal</option>
+                <option value="pisco">Pisco</option>
                 <option value="rum">Rum</option>
                 <option value="rye">Rye</option>
                 <option value="tequila">Tequila</option>
@@ -65,12 +73,7 @@
             <div class="card">
               <span
                 v-if="outOfStock(drink)"
-                style="
-                  position: absolute;
-                  top: 50px;
-                  left: 22px;
-                  color: white;
-                "
+                style="position: absolute; top: 50px; left: 22px; color: white"
                 >Out of stock</span
               >
               <div
@@ -82,7 +85,12 @@
                     <img width="100" :src="drink.imageUrl" />
                   </div>
                   <div class="col">
-                    <h4 class="card-title fw-light">{{ drink.name }}</h4>
+                    <h4
+                      class="card-title fw-light"
+                      style="font-family: Papyrus"
+                    >
+                      {{ drink.name }}
+                    </h4>
                     <p class="card-text">{{ drink.description }}</p>
                   </div>
                 </div>
@@ -93,7 +101,7 @@
       </div>
       <footer>
         <p class="text-center text-body-secondary pt-2">
-          © 2023 | Please drink responsibly
+          © 2024 | Please drink responsibly
         </p>
       </footer>
     </main>
@@ -114,7 +122,7 @@
       return {
         selectedCategory: "featured",
         selectedSpirit: "all",
-        outOfStockIngredients: ["grapes", "mint", "basil"],
+        outOfStockIngredients: ["grapes", "basil", "sweet vermouth"],
         drinks: [
           {
             name: "Whiskey Sour",
@@ -132,8 +140,7 @@
           },
           {
             name: "Rum Strawberry Basil Smash",
-            description:
-              "Jamaican rum, lemon juice, strawberry, basil",
+            description: "Jamaican rum, lemon juice, strawberry, basil",
             tags: ["sour"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/strawberry-basil-smash.jpg",
@@ -141,16 +148,15 @@
           {
             name: "Spicy Mezcal Margarita",
             description:
-              "Mezcal, Cointreau, lime juice, honey, habanero, tajín",
+              "Mezcal, Cointreau, lime juice, agave, habanero, tajín",
             tags: ["featured", "sour"],
             spirit: "mezcal",
             imageUrl: "/cocktail-menu/img/spicy-mezcal-margarita.jpg",
           },
           {
             name: "Sazerac",
-            description:
-              "Rye, cognac, Pernod, Peychaud's, Angostura",
-            tags: ["featured", "classic", "after-dinner", "bitter"],
+            description: "Rye, cognac, Pernod, Peychaud's, Angostura",
+            tags: ["classic", "after-dinner", "bitter"],
             spirit: "rye",
             imageUrl: "/cocktail-menu/img/sazerac.jpg",
           },
@@ -163,16 +169,14 @@
           },
           {
             name: "Mai Tai",
-            description:
-              "Rum, curaçao, lime juice, orgeat",
+            description: "Rum, curaçao, lime juice, orgeat",
             tags: ["featured", "classic", "sour", "tiki"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/mai-tai.jpg",
           },
           {
-            name: "Old Fashioned",
-            description:
-              "Bourbon, Angostura aromatic and orange bitters",
+            name: "Smoked Maple Old Fashioned",
+            description: "Bourbon, maple syrup, walnut bitters",
             tags: ["featured", "classic", "bitter"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/old-fashioned.jpg",
@@ -201,14 +205,14 @@
           {
             name: "Strawberry Daiquiri",
             description: "White rum, lime juice, strawberry",
-            tags: ["sour", "featured", "classic"],
+            tags: ["sour", "classic"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/strawberry-daiquiri.jpg",
           },
           {
             name: "Whiskey Smash",
             description: "Bourbon, lemon juice, mint",
-            tags: ["sour", "featured"],
+            tags: ["sour"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/whiskey-smash.jpg",
           },
@@ -221,7 +225,8 @@
           },
           {
             name: "Margarita",
-            description: "Tequila, Cointreau, lime juice (spicy, cucumber, or pineapple available by request)",
+            description:
+              "Tequila, Cointreau, lime juice (spicy, cucumber, or pineapple available by request)",
             tags: ["classic", "sour"],
             spirit: "tequila",
             imageUrl: "/cocktail-menu/img/margarita.png",
@@ -235,17 +240,11 @@
           },
           {
             name: "Painkiller",
-            description: "Dark and aged rum, pineapple juice, orange juice, coconut cream, nutmeg",
-            tags: ["featured", "tiki"],
+            description:
+              "Dark and aged rum, pineapple juice, orange juice, coconut cream, nutmeg",
+            tags: ["tiki"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/painkiller.jpg",
-          },
-          {
-            name: "Port of Spain",
-            description: "Mezcal, Angostura, lime juice, orgeat",
-            tags: ["bitter", "after-dinner"],
-            spirit: "mezcal",
-            imageUrl: "/cocktail-menu/img/port-of-spain.jpg",
           },
           {
             name: "Army and Navy",
@@ -270,14 +269,14 @@
           },
           {
             name: "Paper Plane",
-            description: "Bourbon, Aperol, amaro, lemon juice",
+            description: "Bourbon, Aperol, Averna amaro, lemon juice",
             tags: ["sour", "featured", "bitter"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/paper-plane.jpg",
           },
           {
             name: "Division Bell",
-            description: "Mezcal, Aperol, Luxardo Maraschino liqueur, lime juice",
+            description: "Mezcal, Aperol, Luxardo liqueur, lime juice",
             tags: ["sour", "featured"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/division-bell.jpg",
@@ -291,17 +290,11 @@
           },
           {
             name: "Maple Rum Old Fashioned",
-            description: "Rum, maple syrup, Angostura aromatic and orange bitters",
+            description:
+              "Rum, maple syrup, Angostura aromatic and orange bitters",
             tags: ["after-dinner"],
             spirit: "rum",
             imageUrl: "/cocktail-menu/img/maple-rum-old-fashioned.jpg",
-          },
-          {
-            name: "Boulevardier",
-            description: "Bourbon, sweet vermouth, campari",
-            tags: ["featured", "bitter"],
-            spirit: "bourbon",
-            imageUrl: "/cocktail-menu/img/boulevardier.png",
           },
           {
             name: "Oaxaca Old Fasioned",
@@ -309,6 +302,41 @@
             tags: ["featured", "after-dinner"],
             spirit: "tequila",
             imageUrl: "/cocktail-menu/img/oaxaca-old-fashioned.png",
+          },
+          {
+            name: "Pisco Sour",
+            description: "Pisco, lime, egg white, Angostura",
+            tags: ["featured", "sour"],
+            spirit: "pisco",
+            imageUrl: "/cocktail-menu/img/pisco-sour.jpg",
+          },
+          {
+            name: "New York Sour",
+            description: "Bourbon, lemon, egg white, red wine float",
+            tags: ["sour"],
+            spirit: "bourbon",
+            imageUrl: "/cocktail-menu/img/new-york-sour.jpg",
+          },
+          {
+            name: "Monte Cassino",
+            description: "Rye, yellow chartreuse, Benedictine, lemon",
+            tags: ["featured", "sour"],
+            spirit: "rye",
+            imageUrl: "/cocktail-menu/img/monte-cassino.jpg",
+          },
+          {
+            name: "Hot and Heavy",
+            description: "Mezcal, hot honey, Angostura, Peychaud's, lemon",
+            tags: ["featured", "sour"],
+            spirit: "mezcal",
+            imageUrl: "/cocktail-menu/img/hot-and-heavy.jpg",
+          },
+          {
+            name: "Last Word",
+            description: "Gin, green chartreuse, Luxardo liqueur, lime",
+            tags: ["featured", "sour", "classic"],
+            spirit: "gin",
+            imageUrl: "/cocktail-menu/img/last-word.png",
           },
         ].sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0)),
       };
