@@ -12,23 +12,39 @@
     />
   </head>
   <body>
-    <main id="app">
-      <table class="mx-auto mt-5" style="width: 800px">
-        <tr v-for="(row, y) of board">
-          <td
-            v-for="(column, x) of row"
-            :class="{
-              'bg-secondary': (x + y) % 2, 'bg-white': !((x + y) % 2)
-            }"
-            style="height: 100px"
-            :style="{cursor: (!selectedPiece && column === 'red') || (selectedPiece && isValidMove(x, y)) ? 'pointer' : 'unset'}"
-          >
-            <svg v-if="column" width="100" height="100">
-              <circle r="40" cx="50" cy="50" :fill="column"></circle>
-            </svg>
-          </td>
-        </tr>
-      </table>
+    <main id="app" style="height: 100vh; overflow: hidden">
+      <div
+        style="
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <table class="m-auto" :style="{width}">
+          <tr v-for="(row, y) of board">
+            <td
+              v-for="(column, x) of row"
+              :class="{
+                'bg-secondary': (x + y) % 2, 'bg-white': !((x + y) % 2)
+              }"
+              :style="{
+                cursor: isValidMove(x, y) ? 'pointer' : 'unset',
+                height: width/8 + 'px'
+              }"
+            >
+              <svg v-if="column" :width="width/8" height="height/8">
+                <circle
+                  :r="(width/16)*0.8"
+                  :cx="width/16"
+                  :cy="width/16"
+                  :fill="column"
+                ></circle>
+              </svg>
+            </td>
+          </tr>
+        </table>
+      </div>
     </main>
 
     <script
@@ -56,11 +72,18 @@
           ["red", 0, "red", 0, "red", 0, "red", 0],
         ],
         selectedPiece: null,
+        width: 800,
       };
+    },
+    mounted() {
+      this.width = Math.min(window.innerWidth, window.innerHeight);
     },
     computed: {},
     methods: {
       isValidMove(x, y) {
+        if (!this.selectedPiece && this.board[y][x] === "red") {
+          return true;
+        }
         return false; // todo
       },
     },
