@@ -30,8 +30,11 @@
               }"
               :style="{
                 cursor: isValidMove(x, y) ? 'pointer' : 'unset',
-                height: width/8 + 'px'
+                height: width/8 + 'px',
+                outline: selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y 
+                  && column.toLowerCase() === 'red' ? '6px solid black' : 'none',
               }"
+              @click="spaceClicked(x, y)"
             >
               <svg v-if="column" :width="width/8" :height="width/8">
                 <circle
@@ -81,10 +84,45 @@
     computed: {},
     methods: {
       isValidMove(x, y) {
-        if (!this.selectedPiece && this.board[y][x] === "red") {
+        if (this.board[y][x] === "red" || this.board[y][x] === "RED") {
+          return true;
+        } else if (
+          this.selectedPiece &&
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
+          Math.abs(x - this.selectedPiece[0]) === 1 &&
+          Math.abs(y - this.selectedPiece[1]) === 1 &&
+          !this.board[y][x]
+        ) {
+          // open space, king
+          return true;
+        } else if (
+          this.selectedPiece &&
+          Math.abs(x - this.selectedPiece[0]) === 1 &&
+          this.selectedPiece[1] - y === 1 &&
+          !this.board[y][x]
+        ) {
+          // open space, non-king
           return true;
         }
-        return false; // todo
+        return false; // todo: king and regular jump
+      },
+      spaceClicked(x, y) {
+        if (!this.isValidMove(x, y)) return;
+        if (!this.selectedPiece || this.board[y][x] === "red") {
+          this.selectedPiece = [x, y];
+          return;
+        }
+        // move the piece into open space
+        if (!this.board[y][x]) {
+          this.board[y][x] =
+            this.board[this.selectedPiece[1]][this.selectedPiece[0]];
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
+        }
+        // todo: execute jump
+
+        this.selectedPiece = null;
+
+        // todo: black move
       },
     },
   }).mount("#app");
