@@ -21,7 +21,7 @@
           justify-content: center;
         "
       >
-        <table class="m-auto" :style="{width}">
+        <table class="m-auto">
           <tr v-for="(row, y) of board">
             <td
               v-for="(column, x) of row"
@@ -39,9 +39,25 @@
               <svg v-if="column" :width="width/8" :height="width/8">
                 <circle
                   :r="(width/16)*0.8"
-                  :cx="width/16"
-                  :cy="width/16"
+                  :cx="width/16 * 1.05"
+                  :cy="width/16  * 1.05"
                   :fill="column"
+                  stroke="white"
+                ></circle>
+                <circle
+                  :r="(width/16)*0.8"
+                  :cx="width/16 * 0.95"
+                  :cy="width/16 * 0.95"
+                  :fill="column"
+                  stroke="white"
+                ></circle>
+                <circle
+                  v-if="column === 'RED' || column === 'BLACK'"
+                  :r="(width/16)*0.8"
+                  :cx="width/16 * 0.85"
+                  :cy="width/16 * 0.85"
+                  :fill="column"
+                  stroke="white"
                 ></circle>
               </svg>
             </td>
@@ -80,7 +96,7 @@
       };
     },
     mounted() {
-      this.width = Math.min(window.innerWidth, window.innerHeight);
+      this.width = Math.min(window.innerWidth, window.innerHeight) - 16; // account for table cell borders
     },
     computed: {},
     methods: {
