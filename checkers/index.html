@@ -114,40 +114,40 @@
     computed: {},
     methods: {
       isValidMove(x, y, color) {
-        if (this.animationInProgress) return false;
+        if (this.animationInProgress || x < 0 || x > 7 || y < 0 || y > 7)
+          return false;
+
+        // select piece/switch selected piece
         if (
           !this.multiJumpInProgress &&
           (this.board[y][x] === color ||
-            this.board[y][x] === color.toUpperCase())
-        ) {
+            this.board[y][x] === color.toUpperCase()) &&
+          (color === "red" || !this.selectedPiece)
+        )
           return true;
-        }
+        if (!this.selectedPiece) return false;
 
+        // piece selection
         const direction = color === "red" ? 1 : -1;
         const opposingColor = color === "red" ? "black" : "red";
         // open space, non-king
         if (
-          this.selectedPiece &&
           Math.abs(x - this.selectedPiece[0]) === 1 &&
           this.selectedPiece[1] - y === direction &&
           !this.board[y][x]
-        ) {
+        )
           return true;
-        }
         // open space, king
         if (
-          this.selectedPiece &&
           this.board[this.selectedPiece[1]][this.selectedPiece[0]] ===
             color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 1 &&
           Math.abs(y - this.selectedPiece[1]) === 1 &&
           !this.board[y][x]
-        ) {
+        )
           return true;
-        }
         // valid regular jump
         if (
-          this.selectedPiece &&
           this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
           y - this.selectedPiece[1] === 2 * direction &&
@@ -162,7 +162,6 @@
         }
         // valid king jump
         if (
-          this.selectedPiece &&
           this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
           Math.abs(y - this.selectedPiece[1]) === 2 &&
@@ -222,14 +221,44 @@
             }
           }
 
-          // end turn
-          this.selectedPiece = null;
-
-          // todo: black move
+          // black move
           // get all pieces with moves
           // for each piece, get all possible moves
-          // calculate score of each move
-          // choose move with highest score
+          const options = [];
+          for (let y = 0; y < 8; y++) {
+            for (let x = y % 2 ? 0 : 1; x < 8; x += 2) {
+              this.selectedPiece = null;
+              if (this.isValidMove(x, y, "black")) {
+                // check if any valid moves moves
+                this.selectedPiece = [x, y];
+                const moves = [];
+                const possibleMoves = [
+                  [x + 1, y + 1],
+                  [x + 1, y - 1],
+                  [x - 1, y + 1],
+                  [x - 1, y - 1],
+                  [x + 2, y + 2],
+                  [x + 2, y - 2],
+                  [x - 2, y + 2],
+                  [x - 2, y - 2],
+                ];
+                for (const possibleMove of possibleMoves) {
+                  if (
+                    this.isValidMove(possibleMove[0], possibleMove[1], "black")
+                  )
+                    moves.push(possibleMove);
+                }
+                if (moves.length) options.push({ piece: [x, y], moves });
+              }
+            }
+          }
+          console.log(options);
+
+          // todo: calculate score of each move
+          // todo: choose move with highest score
+
+          // end turn
+          this.selectedPiece = null;
         }, this.animationDuration);
       },
     },
