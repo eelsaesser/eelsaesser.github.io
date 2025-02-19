@@ -38,24 +38,24 @@
             >
               <svg v-if="column" :width="width/8" :height="width/8">
                 <circle
-                  :r="(width/16)*0.8"
-                  :cx="width/16 * 1.05"
-                  :cy="width/16  * 1.05"
+                  :r="width/16 * 0.8"
+                  :cx="width/16"
+                  :cy="width/16 * 1.06"
                   :fill="column"
                   stroke="white"
                 ></circle>
                 <circle
-                  :r="(width/16)*0.8"
-                  :cx="width/16 * 0.95"
+                  :r="width/16 * 0.8"
+                  :cx="width/16"
                   :cy="width/16 * 0.95"
                   :fill="column"
                   stroke="white"
                 ></circle>
                 <circle
                   v-if="column === 'RED' || column === 'BLACK'"
-                  :r="(width/16)*0.8"
-                  :cx="width/16 * 0.85"
-                  :cy="width/16 * 0.85"
+                  :r="width/16 * 0.8"
+                  :cx="width/16"
+                  :cy="width/16 * 0.84"
                   :fill="column"
                   stroke="white"
                 ></circle>
@@ -156,7 +156,11 @@
       },
       spaceClicked(x, y) {
         if (!this.isValidRedMove(x, y)) return;
-        if (!this.selectedPiece || this.board[y][x] === "red") {
+        if (
+          !this.selectedPiece ||
+          this.board[y][x] === "red" ||
+          this.board[y][x] === "RED"
+        ) {
           this.selectedPiece = [x, y];
           return;
         }
