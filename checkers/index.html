@@ -31,12 +31,22 @@
               :style="{
                 cursor: isValidMove(x, y, 'red') ? 'pointer' : 'unset',
                 height: width/8 + 'px',
-                outline: selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y 
+                outline: !animationInProgress && selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y
                   && column.toLowerCase() === 'red' ? '6px solid black' : 'none',
               }"
               @click="spaceClicked(x, y)"
             >
-              <svg v-if="column" :width="width/8" :height="width/8">
+              <svg
+                v-if="column"
+                :width="width/8 - 2"
+                :height="width/8 - 2"
+                :style="{
+                  transition: `transform ${animationDuration/1000}s linear 0s`,
+                  transform: selectedPiece && moveSpot && selectedPiece[0] === x && selectedPiece[1] === y ?
+                    `translate(${(width/8 + 2) * (moveSpot[0] - selectedPiece[0])}px, ${(width/8 + 1) * (moveSpot[1] - selectedPiece[1])}px)`
+                      : 'unset'
+                }"
+              >
                 <circle
                   :r="width/16 * 0.8"
                   :cx="width/16"
@@ -91,16 +101,20 @@
           ["red", 0, "red", 0, "red", 0, "red", 0],
         ],
         selectedPiece: null,
+        moveSpot: null,
         multiJumpInProgress: false,
         width: 800,
+        animationDuration: 500,
+        animationInProgress: false,
       };
     },
     mounted() {
-      this.width = Math.min(window.innerWidth, window.innerHeight) - 16; // account for table cell borders
+      this.width = Math.min(window.innerWidth, window.innerHeight);
     },
     computed: {},
     methods: {
       isValidMove(x, y, color) {
+        if (this.animationInProgress) return false;
         if (
           !this.multiJumpInProgress &&
           (this.board[y][x] === color ||
@@ -181,35 +195,42 @@
           const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
           this.board[middleY][middleX] = 0;
         }
-        this.board[y][x] = y ? "red" : "RED"; // king me
-        this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
+        this.moveSpot = [x, y];
+        this.animationInProgress = true;
+        // animate move, proceed after animation
+        setTimeout(() => {
+          this.board[y][x] = y ? "red" : "RED"; // king me
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
+          this.moveSpot = null;
+          this.animationInProgress = false;
 
-        // check for more available jumps, if so, wait for next move (there could be two options)
-        if (isJump) {
-          this.selectedPiece = [x, y];
-          const possibleMoves = [
-            [x + 2, y + 2],
-            [x - 2, y + 2],
-            [x + 2, y - 2],
-            [x - 2, y - 2],
-          ].filter((d) => d[0] >= 0 && d[0] < 8 && d[1] >= 0 && d[1] < 8);
-          this.multiJumpInProgress = false;
-          for (const move of possibleMoves) {
-            if (this.isValidMove(move[0], move[1], "red")) {
-              this.multiJumpInProgress = true;
-              return;
+          // check for more available jumps, if so, wait for next move (there could be two options)
+          if (isJump) {
+            this.selectedPiece = [x, y];
+            const possibleMoves = [
+              [x + 2, y + 2],
+              [x - 2, y + 2],
+              [x + 2, y - 2],
+              [x - 2, y - 2],
+            ].filter((d) => d[0] >= 0 && d[0] < 8 && d[1] >= 0 && d[1] < 8);
+            this.multiJumpInProgress = false;
+            for (const move of possibleMoves) {
+              if (this.isValidMove(move[0], move[1], "red")) {
+                this.multiJumpInProgress = true;
+                return;
+              }
             }
           }
-        }
 
-        // end turn
-        this.selectedPiece = null;
+          // end turn
+          this.selectedPiece = null;
 
-        // todo: black move
-        // get all pieces with moves
-        // for each piece, get all possible moves
-        // calculate score of each move
-        // choose move with highest score
+          // todo: black move
+          // get all pieces with moves
+          // for each piece, get all possible moves
+          // calculate score of each move
+          // choose move with highest score
+        }, this.animationDuration);
       },
     },
   }).mount("#app");
