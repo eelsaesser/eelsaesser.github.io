@@ -29,7 +29,7 @@
                 'bg-secondary': (x + y) % 2, 'bg-white': !((x + y) % 2)
               }"
               :style="{
-                cursor: isValidMove(x, y) ? 'pointer' : 'unset',
+                cursor: isValidRedMove(x, y) ? 'pointer' : 'unset',
                 height: width/8 + 'px',
                 outline: selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y 
                   && column.toLowerCase() === 'red' ? '6px solid black' : 'none',
@@ -75,6 +75,7 @@
           ["red", 0, "red", 0, "red", 0, "red", 0],
         ],
         selectedPiece: null,
+        multiJumpInProgress: false,
         width: 800,
       };
     },
@@ -83,8 +84,11 @@
     },
     computed: {},
     methods: {
-      isValidMove(x, y) {
-        if (this.board[y][x] === "red" || this.board[y][x] === "RED") {
+      isValidRedMove(x, y) {
+        if (
+          !this.multiJumpInProgress &&
+          (this.board[y][x] === "red" || this.board[y][x] === "RED")
+        ) {
           return true;
         } else if (
           this.selectedPiece &&
@@ -103,26 +107,79 @@
         ) {
           // open space, non-king
           return true;
+        } else if (
+          this.selectedPiece &&
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
+          Math.abs(x - this.selectedPiece[0]) === 2 &&
+          Math.abs(y - this.selectedPiece[1]) === 2 &&
+          !this.board[y][x]
+        ) {
+          // valid king jump
+          const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
+          const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
+          return (
+            this.board[middleY][middleX] === "black" ||
+            this.board[middleY][middleX] === "BLACK"
+          );
+        } else if (
+          this.selectedPiece &&
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
+          Math.abs(x - this.selectedPiece[0]) === 2 &&
+          y - this.selectedPiece[1] === 2 &&
+          !this.board[y][x]
+        ) {
+          // valid regular jump
+          const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
+          const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
+          return (
+            this.board[middleY][middleX] === "black" ||
+            this.board[middleY][middleX] === "BLACK"
+          );
         }
-        return false; // todo: king and regular jump
+        return false;
       },
       spaceClicked(x, y) {
-        if (!this.isValidMove(x, y)) return;
+        if (!this.isValidRedMove(x, y)) return;
         if (!this.selectedPiece || this.board[y][x] === "red") {
           this.selectedPiece = [x, y];
           return;
         }
-        // move the piece into open space
-        if (!this.board[y][x]) {
-          this.board[y][x] =
-            this.board[this.selectedPiece[1]][this.selectedPiece[0]];
-          this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
+        let isJump = false;
+        if (Math.abs(y - this.selectedPiece[1]) === 2) {
+          isJump = true;
+          const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
+          const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
+          this.board[middleY][middleX] = 0;
         }
-        // todo: execute jump
+        this.board[y][x] = y ? "red" : "RED"; // king me
+        this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
 
+        // check for more available jumps, if so, wait for next move (there could be two options)
+        if (isJump) {
+          this.selectedPiece = [x, y];
+          const possibleMoves = [
+            [x + 2, y + 2],
+            [x - 2, y + 2],
+            [x + 2, y - 2],
+            [x - 2, y - 2],
+          ].filter((d) => d[0] >= 0 && d[0] < 8 && d[1] >= 0 && d[1] < 8);
+          this.multiJumpInProgress = false;
+          for (const move of possibleMoves) {
+            if (this.isValidRedMove(move[0], move[1])) {
+              this.multiJumpInProgress = true;
+              return;
+            }
+          }
+        }
+
+        // end turn
         this.selectedPiece = null;
 
         // todo: black move
+        // get all pieces with moves
+        // for each piece, get all possible moves
+        // calculate score of each move
+        // choose move with highest score
       },
     },
   }).mount("#app");
