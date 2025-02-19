@@ -31,6 +31,7 @@
               :style="{
                 cursor: isValidMove(x, y, 'red') ? 'pointer' : 'unset',
                 height: width/8 + 'px',
+                width: width/8 + 'px',
                 outline: !animationInProgress && selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y
                   && column.toLowerCase() === 'red' ? '6px solid black' : 'none',
               }"
@@ -148,9 +149,8 @@
           return true;
         // valid regular jump
         if (
-          this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
-          y - this.selectedPiece[1] === 2 * direction &&
+          this.selectedPiece[1] - y === 2 * direction &&
           !this.board[y][x]
         ) {
           const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
@@ -162,7 +162,8 @@
         }
         // valid king jump
         if (
-          this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "RED" &&
+          this.board[this.selectedPiece[1]][this.selectedPiece[0]] ===
+            color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
           Math.abs(y - this.selectedPiece[1]) === 2 &&
           !this.board[y][x]
@@ -192,7 +193,11 @@
         this.animationInProgress = true;
         // animate move, proceed after animation
         setTimeout(() => {
-          this.board[y][x] = y ? "red" : "RED"; // king me
+          this.board[y][x] =
+            y &&
+            this.board[this.selectedPiece[1]][this.selectedPiece[0]] === "red"
+              ? "red"
+              : "RED"; // king me
           this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
           let isJump = false;
           if (Math.abs(y - this.selectedPiece[1]) === 2) {
@@ -206,6 +211,7 @@
           this.animationInProgress = false;
 
           // check for more available jumps, if so, wait for next move (there could be two options)
+          this.multiJumpInProgress = true;
           if (isJump) {
             this.selectedPiece = [x, y];
             const possibleMoves = [
@@ -214,14 +220,13 @@
               [x + 2, y - 2],
               [x - 2, y - 2],
             ].filter((d) => d[0] >= 0 && d[0] < 8 && d[1] >= 0 && d[1] < 8);
-            this.multiJumpInProgress = false;
             for (const move of possibleMoves) {
               if (this.isValidMove(move[0], move[1], "red")) {
-                this.multiJumpInProgress = true;
                 return;
               }
             }
           }
+          this.multiJumpInProgress = false;
 
           // black move
           // get all pieces with moves
@@ -253,9 +258,9 @@
               }
             }
           }
-          console.log(options);
 
           // todo: calculate score of each move
+          // todo: append to moves for multi-jumps
 
           // choose move with the highest score
           for (const option of options) {
@@ -275,22 +280,35 @@
               this.animationInProgress = true;
               setTimeout(() => {
                 this.board[this.moveSpot[1]][this.moveSpot[0]] =
-                  this.moveSpot[1] < 7 ? "black" : "BLACK"; // king me
-                this.board[this.selectedPiece[1]][this.selectedPiece[0]] = 0;
-                if (Math.abs(this.moveSpot[1] - this.selectedPiece[1]) === 2) {
-                  const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
-                  const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
+                  this.moveSpot[1] < 7 &&
+                  this.board[selectedOption.moves[i][1]][
+                    selectedOption.moves[i][0]
+                  ] === "black"
+                    ? "black"
+                    : "BLACK"; // king me
+                this.board[selectedOption.moves[i][1]][
+                  selectedOption.moves[i][0]
+                ] = 0;
+                if (
+                  Math.abs(this.moveSpot[1] - selectedOption.moves[i][1]) === 2
+                ) {
+                  const middleX =
+                    this.moveSpot[0] > selectedOption.moves[i][0]
+                      ? this.moveSpot[0] - 1
+                      : this.moveSpot[0] + 1;
+                  const middleY =
+                    this.moveSpot[1] > selectedOption.moves[i][1]
+                      ? this.moveSpot[1] - 1
+                      : this.moveSpot[1] + 1;
                   this.board[middleY][middleX] = 0;
                 }
 
+                this.selectedPiece = null;
                 this.moveSpot = null;
                 this.animationInProgress = false;
               }, this.animationDuration);
             }, i * this.animationDuration);
           }
-
-          // end turn
-          this.selectedPiece = null;
         }, this.animationDuration);
       },
     },
