@@ -114,15 +114,15 @@
     },
     computed: {},
     methods: {
-      isValidMove(x, y, color) {
+      isValidMove(x, y, color, board) {
+        if (!board) board = this.board;
         if (this.animationInProgress || x < 0 || x > 7 || y < 0 || y > 7)
           return false;
 
         // select piece/switch selected piece
         if (
           !this.multiJumpInProgress &&
-          (this.board[y][x] === color ||
-            this.board[y][x] === color.toUpperCase()) &&
+          (board[y][x] === color || board[y][x] === color.toUpperCase()) &&
           (color === "red" || !this.selectedPiece)
         )
           return true;
@@ -135,44 +135,44 @@
         if (
           Math.abs(x - this.selectedPiece[0]) === 1 &&
           this.selectedPiece[1] - y === direction &&
-          !this.board[y][x]
+          !board[y][x]
         )
           return true;
         // open space, king
         if (
-          this.board[this.selectedPiece[1]][this.selectedPiece[0]] ===
+          board[this.selectedPiece[1]][this.selectedPiece[0]] ===
             color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 1 &&
           Math.abs(y - this.selectedPiece[1]) === 1 &&
-          !this.board[y][x]
+          !board[y][x]
         )
           return true;
         // valid regular jump
         if (
           Math.abs(x - this.selectedPiece[0]) === 2 &&
           this.selectedPiece[1] - y === 2 * direction &&
-          !this.board[y][x]
+          !board[y][x]
         ) {
           const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
           const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
           return (
-            this.board[middleY][middleX] === opposingColor ||
-            this.board[middleY][middleX] === opposingColor.toUpperCase()
+            board[middleY][middleX] === opposingColor ||
+            board[middleY][middleX] === opposingColor.toUpperCase()
           );
         }
         // valid king jump
         if (
-          this.board[this.selectedPiece[1]][this.selectedPiece[0]] ===
+          board[this.selectedPiece[1]][this.selectedPiece[0]] ===
             color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
           Math.abs(y - this.selectedPiece[1]) === 2 &&
-          !this.board[y][x]
+          !board[y][x]
         ) {
           const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
           const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
           return (
-            this.board[middleY][middleX] === opposingColor ||
-            this.board[middleY][middleX] === opposingColor.toUpperCase()
+            board[middleY][middleX] === opposingColor ||
+            board[middleY][middleX] === opposingColor.toUpperCase()
           );
         }
 
@@ -231,36 +231,19 @@
           // black move
           // get all pieces with moves
           // for each piece, get all possible moves
-          let options = [];
-          for (let y = 0; y < 8; y++) {
-            for (let x = y % 2 ? 0 : 1; x < 8; x += 2) {
-              this.selectedPiece = null;
-              if (this.isValidMove(x, y, "black")) {
-                // check if any valid moves moves
-                this.selectedPiece = [x, y];
-                const validMoves = [];
-                const possibleMoves = [
-                  [[x + 1, y + 1]],
-                  [[x + 1, y - 1]],
-                  [[x - 1, y + 1]],
-                  [[x - 1, y - 1]],
-                  [[x + 2, y + 2]],
-                  [[x + 2, y - 2]],
-                  [[x - 2, y + 2]],
-                  [[x - 2, y - 2]],
-                ];
-                for (const moves of possibleMoves) {
-                  if (this.isValidMove(moves[0][0], moves[0][1], "black"))
-                    validMoves.push({ score: Math.random(), moves }); // todo: remove random score
-                }
-                if (validMoves.length)
-                  options.push({ piece: [x, y], validMoves });
-              }
+          const options = this.getOptions("black", this.board.slice());
+
+          // calculate score of each move
+          for (const option of options) {
+            for (const validMove of option.validMoves) {
+              validMove.score = this.getScore(
+                option.piece,
+                validMove.moves,
+                0,
+                5
+              );
             }
           }
-
-          // todo: calculate score of each move
-          // todo: append to moves for multi-jumps
 
           // choose move with the highest score
           for (const option of options) {
@@ -310,6 +293,39 @@
             }, i * this.animationDuration);
           }
         }, this.animationDuration);
+      },
+      getOptions(color, board) {
+        const options = [];
+        for (let y = 0; y < 8; y++) {
+          for (let x = y % 2 ? 0 : 1; x < 8; x += 2) {
+            this.selectedPiece = null;
+            if (this.isValidMove(x, y, color, board)) {
+              // check if any valid moves moves
+              this.selectedPiece = [x, y];
+              const validMoves = [];
+              const possibleMoves = [
+                [[x + 1, y + 1]],
+                [[x + 1, y - 1]],
+                [[x - 1, y + 1]],
+                [[x - 1, y - 1]],
+                [[x + 2, y + 2]],
+                [[x + 2, y - 2]],
+                [[x - 2, y + 2]],
+                [[x - 2, y - 2]],
+              ];
+              for (const moves of possibleMoves) {
+                if (this.isValidMove(moves[0][0], moves[0][1], "black"))
+                  validMoves.push({ moves });
+              }
+              if (validMoves.length)
+                options.push({ piece: [x, y], validMoves });
+            }
+          }
+        }
+        return options;
+      },
+      getScore(piece, moves, cumulativeScore, depth) {
+        return Math.random(); // todo
       },
     },
   }).mount("#app");
