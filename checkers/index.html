@@ -237,10 +237,11 @@
           for (const option of options) {
             for (const validMove of option.validMoves) {
               validMove.score = this.getScore(
+                JSON.parse(JSON.stringify(this.board)),
                 option.piece,
                 validMove.moves,
-                0,
-                5
+                "black",
+                3
               );
             }
           }
@@ -314,7 +315,7 @@
                 [[x - 2, y - 2]],
               ];
               for (const moves of possibleMoves) {
-                if (this.isValidMove(moves[0][0], moves[0][1], "black"))
+                if (this.isValidMove(moves[0][0], moves[0][1], color, board))
                   validMoves.push({ moves });
               }
               if (validMoves.length)
@@ -324,8 +325,76 @@
         }
         return options;
       },
-      getScore(piece, moves, cumulativeScore, depth) {
-        return Math.random(); // todo
+      getScore(board, piece, moves, color, depth) {
+        // todo: do not terminate recursion as long as there is a jump possible
+        if (!depth) return 0;
+
+        let score = 0;
+
+        // make move
+        board[moves[0][1]][moves[0][0]] = color;
+        if (
+          (board[piece[1]][piece[0]] === "black" && moves[0][1] === 7) ||
+          (board[piece[1]][piece[0]] === "red" && !moves[0][1])
+        ) {
+          board[moves[0][1]][moves[0][0]] = color.toUpperCase(); // king me
+          score += 0.5;
+        }
+
+        while (Math.abs(moves[0][1] - piece[1]) === 2) {
+          score++;
+          const middleX =
+            moves[0][0] > piece[0] ? moves[0][0] - 1 : moves[0][0] + 1;
+          const middleY =
+            moves[0][1] > piece[1] ? moves[0][1] - 1 : moves[0][1] + 1;
+          board[middleY][middleX] = 0;
+          piece = moves.slice(0, 1);
+          // todo: more points if piece taken was king
+          // todo: check for another possible jump, if so add it to front of moves
+        }
+
+        // subtract best counter-move score
+        const opposingColor = color === "black" ? "red" : "black";
+        const options = this.getOptions(
+          opposingColor,
+          JSON.parse(JSON.stringify(board))
+        );
+
+        // calculate score of each move
+        for (const option of options) {
+          for (const validMove of option.validMoves) {
+            validMove.score = this.getScore(
+              JSON.parse(JSON.stringify(board)),
+              option.piece,
+              validMove.moves,
+              opposingColor,
+              depth - 1
+            );
+          }
+        }
+
+        // choose move with the highest score
+        for (const option of options) {
+          option.score = Math.max(...option.validMoves.map((d) => d.score));
+          option.moves = option.validMoves.find(
+            (d) => d.score === option.score
+          ).moves;
+        }
+        const counterMove = options.find(
+          (d) => d.score === Math.max(...options.map((d) => d.score))
+        );
+
+        if (depth === 3) {
+          console.log(
+            moves,
+            color,
+            depth,
+            score,
+            counterMove?.score
+          );
+        }
+
+        return score - (counterMove ? counterMove.score : 0);
       },
     },
   }).mount("#app");
