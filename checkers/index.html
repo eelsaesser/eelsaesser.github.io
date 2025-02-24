@@ -399,6 +399,18 @@
               this.isValidMove(possibleJump[0], possibleJump[1], color, board)
             ) {
               moves.push(possibleJump);
+              // make move
+              board[possibleJump[1]][possibleJump[0]] =
+                board[piece[1]][piece[0]];
+              if (
+                (board[piece[1]][piece[0]] === "black" &&
+                  possibleJump[1] === 7) ||
+                (board[piece[1]][piece[0]] === "red" && !possibleJump[1])
+              ) {
+                board[possibleJump[1]][possibleJump[0]] = color.toUpperCase(); // king me
+                score += 0.5;
+              }
+              board[piece[1]][piece[0]] = 0;
               break;
             }
           }
