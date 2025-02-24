@@ -29,7 +29,7 @@
                 'bg-secondary': (x + y) % 2, 'bg-white': !((x + y) % 2)
               }"
               :style="{
-                cursor: isValidMove(x, y, 'red') ? 'pointer' : 'unset',
+                cursor: isValidMove(x, y, 'red', board) ? 'pointer' : 'unset',
                 height: width/8 + 'px',
                 width: width/8 + 'px',
                 outline: !animationInProgress && selectedPiece && selectedPiece[0] === x && selectedPiece[1] === y
@@ -115,7 +115,6 @@
     computed: {},
     methods: {
       isValidMove(x, y, color, board) {
-        if (!board) board = this.board;
         if (this.animationInProgress || x < 0 || x > 7 || y < 0 || y > 7)
           return false;
 
@@ -179,7 +178,7 @@
         return false;
       },
       spaceClicked(x, y) {
-        if (!this.isValidMove(x, y, "red")) return;
+        if (!this.isValidMove(x, y, "red", this.board)) return;
         if (
           !this.selectedPiece ||
           this.board[y][x] === "red" ||
@@ -221,7 +220,7 @@
               [x - 2, y - 2],
             ].filter((d) => d[0] >= 0 && d[0] < 8 && d[1] >= 0 && d[1] < 8);
             for (const move of possibleMoves) {
-              if (this.isValidMove(move[0], move[1], "red")) {
+              if (this.isValidMove(move[0], move[1], "red", this.board)) {
                 return;
               }
             }
@@ -290,7 +289,7 @@
                 this.selectedPiece = null;
                 this.moveSpot = null;
                 this.animationInProgress = false;
-              }, this.animationDuration);
+              }, this.animationDuration - 100);
             }, i * this.animationDuration);
           }
         }, this.animationDuration);
@@ -330,9 +329,10 @@
         if (!depth) return 0;
 
         let score = 0;
+        const opposingColor = color === "black" ? "red" : "black";
 
         // make move
-        board[moves[0][1]][moves[0][0]] = color;
+        board[moves[0][1]][moves[0][0]] = board[piece[1]][piece[0]];
         if (
           (board[piece[1]][piece[0]] === "black" && moves[0][1] === 7) ||
           (board[piece[1]][piece[0]] === "red" && !moves[0][1])
@@ -340,21 +340,39 @@
           board[moves[0][1]][moves[0][0]] = color.toUpperCase(); // king me
           score += 0.5;
         }
+        board[piece[1]][piece[0]] = 0;
 
-        while (Math.abs(moves[0][1] - piece[1]) === 2) {
+        while (Math.abs(moves[moves.length - 1][1] - piece[1]) === 2) {
           score++;
           const middleX =
             moves[0][0] > piece[0] ? moves[0][0] - 1 : moves[0][0] + 1;
           const middleY =
             moves[0][1] > piece[1] ? moves[0][1] - 1 : moves[0][1] + 1;
+          if (board[middleY][middleX] === opposingColor.toUpperCase())
+            score += 0.75;
           board[middleY][middleX] = 0;
-          piece = moves.slice(0, 1);
-          // todo: more points if piece taken was king
-          // todo: check for another possible jump, if so add it to front of moves
+          piece = moves[moves.length - 1].slice();
+          // check for another possible jump, if so add it to front of moves
+          const possibleJumps = [
+            [piece[0] + 2, piece[1] + 2],
+            [piece[0] - 2, piece[1] + 2],
+            [piece[0] + 2, piece[1] - 2],
+            [piece[0] - 2, piece[1] - 2],
+          ];
+          this.selectedPiece = piece;
+          this.multiJumpInProgress = true;
+          for (const possibleJump of possibleJumps) {
+            if (
+              this.isValidMove(possibleJump[0], possibleJump[1], color, board)
+            ) {
+              moves.push(possibleJump);
+              break;
+            }
+          }
         }
+        this.multiJumpInProgress = false;
 
         // subtract best counter-move score
-        const opposingColor = color === "black" ? "red" : "black";
         const options = this.getOptions(
           opposingColor,
           JSON.parse(JSON.stringify(board))
@@ -383,16 +401,6 @@
         const counterMove = options.find(
           (d) => d.score === Math.max(...options.map((d) => d.score))
         );
-
-        if (depth === 3) {
-          console.log(
-            moves,
-            color,
-            depth,
-            score,
-            counterMove?.score
-          );
-        }
 
         return score - (counterMove ? counterMove.score : 0);
       },
