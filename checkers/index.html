@@ -88,6 +88,10 @@
 <script type="module">
   import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
+  // todo: lookup tables for current red and black positions
+  // todo: debug scoring alg
+  // todo: add tiebreaker points for moving toward center of board
+
   createApp({
     data() {
       return {
@@ -115,7 +119,7 @@
     computed: {},
     methods: {
       isValidMove(x, y, color, board) {
-        if (this.animationInProgress || x < 0 || x > 7 || y < 0 || y > 7)
+        if (x < 0 || x > 7 || y < 0 || y > 7 || this.animationInProgress)
           return false;
 
         // select piece/switch selected piece
@@ -137,15 +141,6 @@
           !board[y][x]
         )
           return true;
-        // open space, king
-        if (
-          board[this.selectedPiece[1]][this.selectedPiece[0]] ===
-            color.toUpperCase() &&
-          Math.abs(x - this.selectedPiece[0]) === 1 &&
-          Math.abs(y - this.selectedPiece[1]) === 1 &&
-          !board[y][x]
-        )
-          return true;
         // valid regular jump
         if (
           Math.abs(x - this.selectedPiece[0]) === 2 &&
@@ -159,6 +154,15 @@
             board[middleY][middleX] === opposingColor.toUpperCase()
           );
         }
+        // open space, king
+        if (
+          board[this.selectedPiece[1]][this.selectedPiece[0]] ===
+            color.toUpperCase() &&
+          Math.abs(x - this.selectedPiece[0]) === 1 &&
+          Math.abs(y - this.selectedPiece[1]) === 1 &&
+          !board[y][x]
+        )
+          return true;
         // valid king jump
         if (
           board[this.selectedPiece[1]][this.selectedPiece[0]] ===
@@ -230,11 +234,12 @@
           // black move
           // get all pieces with moves
           // for each piece, get all possible moves
-          const options = this.getOptions("black", this.board.slice());
+          const options = this.getOptions("black", this.board);
 
           // calculate score of each move
           for (const option of options) {
             for (const validMove of option.validMoves) {
+              console.log(this.board);
               validMove.score = this.getScore(
                 JSON.parse(JSON.stringify(this.board)),
                 option.piece,
@@ -289,7 +294,7 @@
                 this.selectedPiece = null;
                 this.moveSpot = null;
                 this.animationInProgress = false;
-              }, this.animationDuration - 100);
+              }, this.animationDuration - 10);
             }, i * this.animationDuration);
           }
         }, this.animationDuration);
