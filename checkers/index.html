@@ -312,17 +312,32 @@
               // check if any valid moves moves
               this.selectedPiece = [x, y];
               const validMoves = [];
-              // todo: prune possibleMoves based on color and king status
-              const possibleMoves = [
-                [[x + 1, y + 1]],
-                [[x + 1, y - 1]],
-                [[x - 1, y + 1]],
-                [[x - 1, y - 1]],
-                [[x + 2, y + 2]],
-                [[x + 2, y - 2]],
-                [[x - 2, y + 2]],
-                [[x - 2, y - 2]],
-              ];
+              // optimize moves to check based on king status
+              const possibleMoves =
+                board[y][x] === "red"
+                  ? [
+                      [[x + 1, y - 1]],
+                      [[x - 1, y - 1]],
+                      [[x + 2, y - 2]],
+                      [[x - 2, y - 2]],
+                    ]
+                  : board[y][x] === "black"
+                  ? [
+                      [[x + 1, y + 1]],
+                      [[x - 1, y + 1]],
+                      [[x + 2, y + 2]],
+                      [[x - 2, y + 2]],
+                    ]
+                  : [
+                      [[x + 1, y - 1]],
+                      [[x - 1, y - 1]],
+                      [[x + 2, y - 2]],
+                      [[x - 2, y - 2]],
+                      [[x + 1, y + 1]],
+                      [[x - 1, y + 1]],
+                      [[x + 2, y + 2]],
+                      [[x - 2, y + 2]],
+                    ];
               for (const moves of possibleMoves) {
                 if (
                   this.isValidMove(moves[0][0], moves[0][1], color, board, true)
@@ -403,7 +418,6 @@
           opposingColor,
           JSON.parse(JSON.stringify(board))
         );
-        if (depth === 3) console.log(options);
 
         // calculate score of each move
         for (const option of options) {
@@ -428,10 +442,6 @@
         const counterMove = options.find(
           (d) => d.score === Math.max(...options.map((d) => d.score))
         );
-
-        if (depth === 3) {
-          console.log(piece, moves, score, counterMove.score);
-        }
 
         return score - (counterMove ? counterMove.score : 0);
       },
