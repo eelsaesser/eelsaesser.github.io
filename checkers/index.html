@@ -117,13 +117,13 @@
     },
     computed: {},
     methods: {
-      isValidMove(x, y, color, board) {
+      isValidMove(x, y, color, board, scoringInProgress) {
         if (x < 0 || x > 7 || y < 0 || y > 7 || this.animationInProgress)
           return false;
 
         // select piece/switch selected piece
         if (
-          (color === "red" || !this.selectedPiece) &&
+          ((color === "red" && !scoringInProgress) || !this.selectedPiece) &&
           (board[y][x] === color || board[y][x] === color.toUpperCase()) &&
           !this.multiJumpInProgress
         )
@@ -246,10 +246,10 @@
             for (const validMove of option.validMoves) {
               validMove.score = this.getScore(
                 JSON.parse(JSON.stringify(this.board)),
-                option.piece,
+                option.piece.slice(),
                 validMove.moves,
                 "black",
-                3
+                4
               );
             }
           }
@@ -312,6 +312,7 @@
               // check if any valid moves moves
               this.selectedPiece = [x, y];
               const validMoves = [];
+              // todo: prune possibleMoves based on color and king status
               const possibleMoves = [
                 [[x + 1, y + 1]],
                 [[x + 1, y - 1]],
@@ -323,7 +324,9 @@
                 [[x - 2, y - 2]],
               ];
               for (const moves of possibleMoves) {
-                if (this.isValidMove(moves[0][0], moves[0][1], color, board))
+                if (
+                  this.isValidMove(moves[0][0], moves[0][1], color, board, true)
+                )
                   validMoves.push({ moves });
               }
               if (validMoves.length)
@@ -334,9 +337,6 @@
         return options;
       },
       getScore(board, piece, moves, color, depth) {
-        // todo: do not terminate recursion as long as there is a jump possible
-        if (!depth) return 0;
-
         // if the move is going toward the center of the board, choose it over an otherwise equal move
         const moveDistanceFromCenter = Math.abs(3.5 - moves[0][0]),
           pieceDistanceFromCenter = Math.abs(3.5 - piece[0]);
@@ -361,6 +361,7 @@
 
         while (Math.abs(moves[moves.length - 1][1] - piece[1]) === 2) {
           score++;
+          if (!depth) return score;
           const index = moves.length - 1;
           const middleX =
             moves[index][0] > piece[0]
@@ -394,18 +395,22 @@
         }
         this.multiJumpInProgress = false;
 
+        // terminate recursion if at given depth of search tree
+        if (!depth) return score;
+
         // subtract best counter-move score
         const options = this.getOptions(
           opposingColor,
           JSON.parse(JSON.stringify(board))
         );
+        if (depth === 3) console.log(options);
 
         // calculate score of each move
         for (const option of options) {
           for (const validMove of option.validMoves) {
             validMove.score = this.getScore(
               JSON.parse(JSON.stringify(board)),
-              option.piece,
+              option.piece.slice(),
               validMove.moves,
               opposingColor,
               depth - 1
@@ -423,6 +428,10 @@
         const counterMove = options.find(
           (d) => d.score === Math.max(...options.map((d) => d.score))
         );
+
+        if (depth === 3) {
+          console.log(piece, moves, score, counterMove.score);
+        }
 
         return score - (counterMove ? counterMove.score : 0);
       },
