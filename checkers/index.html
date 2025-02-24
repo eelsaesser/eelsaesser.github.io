@@ -90,7 +90,6 @@
 
   // todo: lookup tables for current red and black positions
   // todo: debug scoring alg
-  // todo: add tiebreaker points for moving toward center of board
 
   createApp({
     data() {
@@ -338,7 +337,15 @@
         // todo: do not terminate recursion as long as there is a jump possible
         if (!depth) return 0;
 
-        let score = 0;
+        // if the move is going toward the center of the board, choose it over an otherwise equal move
+        const moveDistanceFromCenter = Math.abs(3.5 - moves[0][0]),
+          pieceDistanceFromCenter = Math.abs(3.5 - piece[0]);
+        let score =
+          pieceDistanceFromCenter > moveDistanceFromCenter
+            ? 0.1
+            : moveDistanceFromCenter > pieceDistanceFromCenter
+            ? -0.1
+            : 0;
         const opposingColor = color === "black" ? "red" : "black";
 
         // make move
@@ -416,6 +423,10 @@
         const counterMove = options.find(
           (d) => d.score === Math.max(...options.map((d) => d.score))
         );
+
+        if (depth === 3) {
+          console.log(moves, score, counterMove.score);
+        }
 
         return score - (counterMove ? counterMove.score : 0);
       },
