@@ -114,7 +114,7 @@
       };
     },
     mounted() {
-      this.width = Math.min(window.innerWidth, window.innerHeight);
+      this.width = Math.min(window.innerWidth, window.innerHeight) - 12;
     },
     computed: {},
     methods: {
@@ -124,9 +124,9 @@
 
         // select piece/switch selected piece
         if (
-          !this.multiJumpInProgress &&
+          (color === "red" || !this.selectedPiece) &&
           (board[y][x] === color || board[y][x] === color.toUpperCase()) &&
-          (color === "red" || !this.selectedPiece)
+          !this.multiJumpInProgress
         )
           return true;
         if (!this.selectedPiece) return false;
@@ -154,6 +154,12 @@
             board[middleY][middleX] === opposingColor.toUpperCase()
           );
         }
+        // if you made it this far and you're not a king, invalid move
+        if (
+          board[this.selectedPiece[1]][this.selectedPiece[0]] !==
+          color.toUpperCase()
+        )
+          return false;
         // open space, king
         if (
           board[this.selectedPiece[1]][this.selectedPiece[0]] ===
@@ -239,7 +245,6 @@
           // calculate score of each move
           for (const option of options) {
             for (const validMove of option.validMoves) {
-              console.log(this.board);
               validMove.score = this.getScore(
                 JSON.parse(JSON.stringify(this.board)),
                 option.piece,
@@ -349,10 +354,15 @@
 
         while (Math.abs(moves[moves.length - 1][1] - piece[1]) === 2) {
           score++;
+          const index = moves.length - 1;
           const middleX =
-            moves[0][0] > piece[0] ? moves[0][0] - 1 : moves[0][0] + 1;
+            moves[index][0] > piece[0]
+              ? moves[index][0] - 1
+              : moves[index][0] + 1;
           const middleY =
-            moves[0][1] > piece[1] ? moves[0][1] - 1 : moves[0][1] + 1;
+            moves[index][1] > piece[1]
+              ? moves[index][1] - 1
+              : moves[index][1] + 1;
           if (board[middleY][middleX] === opposingColor.toUpperCase())
             score += 0.75;
           board[middleY][middleX] = 0;
