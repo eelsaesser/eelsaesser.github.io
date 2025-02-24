@@ -88,8 +88,6 @@
 <script type="module">
   import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
-  // todo: lookup tables for current red and black positions
-
   createApp({
     data() {
       return {
@@ -129,9 +127,9 @@
           return true;
         if (!this.selectedPiece || board[y][x]) return false;
 
-        // piece selection
         const direction = color === "red" ? 1 : -1;
         const opposingColor = color === "red" ? "black" : "red";
+
         // open space, non-king
         if (
           Math.abs(x - this.selectedPiece[0]) === 1 &&
@@ -156,6 +154,7 @@
           color.toUpperCase()
         )
           return false;
+
         // open space, king
         if (
           board[this.selectedPiece[1]][this.selectedPiece[0]] ===
@@ -312,7 +311,7 @@
           // check if any valid moves moves
           this.selectedPiece = [x, y];
           const validMoves = [];
-          // optimize moves to check based on king status
+          // pick moves to check based on king status
           const possibleMoves =
             board[y][x] === "red"
               ? [
@@ -427,10 +426,7 @@
         }
 
         // subtract best counter-move score
-        const options = this.getOptions(
-          opposingColor,
-          JSON.parse(JSON.stringify(board))
-        );
+        const options = this.getOptions(opposingColor, board);
 
         // calculate score of each move
         for (const option of options) {
