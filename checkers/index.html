@@ -89,7 +89,6 @@
   import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
   // todo: lookup tables for current red and black positions
-  // todo: debug scoring alg
 
   createApp({
     data() {
@@ -128,7 +127,7 @@
           !this.multiJumpInProgress
         )
           return true;
-        if (!this.selectedPiece) return false;
+        if (!this.selectedPiece || board[y][x]) return false;
 
         // piece selection
         const direction = color === "red" ? 1 : -1;
@@ -136,15 +135,13 @@
         // open space, non-king
         if (
           Math.abs(x - this.selectedPiece[0]) === 1 &&
-          this.selectedPiece[1] - y === direction &&
-          !board[y][x]
+          this.selectedPiece[1] - y === direction
         )
           return true;
         // valid regular jump
         if (
           Math.abs(x - this.selectedPiece[0]) === 2 &&
-          this.selectedPiece[1] - y === 2 * direction &&
-          !board[y][x]
+          this.selectedPiece[1] - y === 2 * direction
         ) {
           const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
           const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
@@ -164,8 +161,7 @@
           board[this.selectedPiece[1]][this.selectedPiece[0]] ===
             color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 1 &&
-          Math.abs(y - this.selectedPiece[1]) === 1 &&
-          !board[y][x]
+          Math.abs(y - this.selectedPiece[1]) === 1
         )
           return true;
         // valid king jump
@@ -173,8 +169,7 @@
           board[this.selectedPiece[1]][this.selectedPiece[0]] ===
             color.toUpperCase() &&
           Math.abs(x - this.selectedPiece[0]) === 2 &&
-          Math.abs(y - this.selectedPiece[1]) === 2 &&
-          !board[y][x]
+          Math.abs(y - this.selectedPiece[1]) === 2
         ) {
           const middleX = x > this.selectedPiece[0] ? x - 1 : x + 1;
           const middleY = y > this.selectedPiece[1] ? y - 1 : y + 1;
@@ -411,7 +406,11 @@
         this.multiJumpInProgress = false;
 
         // terminate recursion if at given depth of search tree
-        if (!depth) return score;
+        // if move contains a jump, continue recursion while counter-jumps are available
+        if (!depth) {
+          if (score < 1) return score;
+          else depth++;
+        }
 
         // subtract best counter-move score
         const options = this.getOptions(
