@@ -300,50 +300,52 @@
       },
       getOptions(color, board) {
         const options = [];
+        const pieceLocations = [];
         for (let y = 0; y < 8; y++) {
           for (let x = y % 2 ? 0 : 1; x < 8; x += 2) {
-            this.selectedPiece = null;
-            if (this.isValidMove(x, y, color, board)) {
-              // check if any valid moves moves
-              this.selectedPiece = [x, y];
-              const validMoves = [];
-              // optimize moves to check based on king status
-              const possibleMoves =
-                board[y][x] === "red"
-                  ? [
-                      [[x + 1, y - 1]],
-                      [[x - 1, y - 1]],
-                      [[x + 2, y - 2]],
-                      [[x - 2, y - 2]],
-                    ]
-                  : board[y][x] === "black"
-                  ? [
-                      [[x + 1, y + 1]],
-                      [[x - 1, y + 1]],
-                      [[x + 2, y + 2]],
-                      [[x - 2, y + 2]],
-                    ]
-                  : [
-                      [[x + 1, y - 1]],
-                      [[x - 1, y - 1]],
-                      [[x + 2, y - 2]],
-                      [[x - 2, y - 2]],
-                      [[x + 1, y + 1]],
-                      [[x - 1, y + 1]],
-                      [[x + 2, y + 2]],
-                      [[x - 2, y + 2]],
-                    ];
-              for (const moves of possibleMoves) {
-                if (
-                  this.isValidMove(moves[0][0], moves[0][1], color, board, true)
-                )
-                  validMoves.push({ moves });
-              }
-              if (validMoves.length)
-                options.push({ piece: [x, y], validMoves });
+            if (board[y][x] === color || board[y][x] === color.toUpperCase()) {
+              pieceLocations.push([x, y]);
             }
           }
         }
+        for (const [x, y] of pieceLocations) {
+          // check if any valid moves moves
+          this.selectedPiece = [x, y];
+          const validMoves = [];
+          // optimize moves to check based on king status
+          const possibleMoves =
+            board[y][x] === "red"
+              ? [
+                  [[x + 1, y - 1]],
+                  [[x - 1, y - 1]],
+                  [[x + 2, y - 2]],
+                  [[x - 2, y - 2]],
+                ]
+              : board[y][x] === "black"
+              ? [
+                  [[x + 1, y + 1]],
+                  [[x - 1, y + 1]],
+                  [[x + 2, y + 2]],
+                  [[x - 2, y + 2]],
+                ]
+              : [
+                  [[x + 1, y - 1]],
+                  [[x - 1, y - 1]],
+                  [[x + 2, y - 2]],
+                  [[x - 2, y - 2]],
+                  [[x + 1, y + 1]],
+                  [[x - 1, y + 1]],
+                  [[x + 2, y + 2]],
+                  [[x - 2, y + 2]],
+                ];
+          for (const moves of possibleMoves) {
+            if (this.isValidMove(moves[0][0], moves[0][1], color, board, true))
+              validMoves.push({ moves });
+          }
+          if (validMoves.length) options.push({ piece: [x, y], validMoves });
+        }
+        this.selectedPiece = null;
+
         return options;
       },
       getScore(board, piece, moves, color, depth) {
