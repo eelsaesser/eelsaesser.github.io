@@ -243,7 +243,7 @@
                 option.piece.slice(),
                 validMove.moves,
                 "black",
-                4
+                3
               );
             }
           }
@@ -372,7 +372,6 @@
 
         while (Math.abs(moves[moves.length - 1][1] - piece[1]) === 2) {
           score++;
-          if (!depth) return score;
           const index = moves.length - 1;
           const middleX =
             moves[index][0] > piece[0]
@@ -416,6 +415,7 @@
             }
           }
         }
+        this.selectedPiece = null;
         this.multiJumpInProgress = false;
 
         // terminate recursion if at given depth of search tree
