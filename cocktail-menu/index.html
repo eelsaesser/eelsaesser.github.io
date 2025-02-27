@@ -170,8 +170,7 @@
           },
           {
             name: "Spicy Mezcal Margarita",
-            description:
-              "Mezcal, lime juice, agave, habanero, tajín",
+            description: "Mezcal, lime juice, agave, habanero, tajín",
             tags: ["featured", "sour"],
             spirit: "mezcal",
             imageUrl: "/cocktail-menu/img/spicy-mezcal-margarita.jpg",
@@ -385,11 +384,9 @@
       },
       order(drink) {
         window.open(
-          `sms://17034341601/${
-            this.isIOS ? "?" : "&"
-          }body=encodeURIComponent("I'd like to order a ${
-            drink.name
-          }."),'_blank'`
+          `sms://17034341601/${this.isIOS ? "?" : "&"}body=I'd like to order a${
+            drink.name.startsWith("A") || drink.name.startsWith("E") ? "n" : ""
+          } ${drink.name}.`
         );
       },
     },
