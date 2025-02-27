@@ -33,7 +33,10 @@
         </p>
       </section>
 
-      <div class="bg-body-tertiary px-2 pt-2 container" style="max-width: 800px">
+      <div
+        class="bg-body-tertiary px-2 pt-2 container"
+        style="max-width: 800px"
+      >
         <table style="margin: auto" class="mb-2">
           <tr>
             <td style="vertical-align: middle; text-align: right">Category</td>
@@ -85,16 +88,31 @@
               >
                 <div class="row align-items-center">
                   <div class="col-auto">
-                    <img width="100" :src="drink.imageUrl" />
+                    <img width="110" :src="drink.imageUrl" />
                   </div>
-                  <div class="col">
-                    <h4
-                      class="card-title fw-light"
-                      style="font-family: Papyrus"
-                    >
-                      {{ drink.name }}
-                    </h4>
-                    <p class="card-text">{{ drink.description }}</p>
+                  <div class="col ps-1">
+                    <div class="row">
+                      <div class="col">
+                        <h4
+                          class="card-title fw-light"
+                          style="font-family: Papyrus; font-size: 18px"
+                        >
+                          {{ drink.name }}
+                        </h4>
+                        <p class="card-text small">{{ drink.description }}</p>
+                      </div>
+                      <div
+                        class="col-lg-auto col-12 text-end"
+                        v-if="!outOfStock(drink) && (isIOS || isAndroid)"
+                      >
+                        <button
+                          class="btn btn-sm btn-outline-light fw-light mt-2"
+                          @click="order(drink)"
+                        >
+                          Order
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -104,7 +122,7 @@
       </div>
       <footer>
         <p class="text-center text-body-secondary pt-2">
-          © 2024 | Please drink responsibly
+          © 2025 | Please drink responsibly
         </p>
       </footer>
     </main>
@@ -123,9 +141,11 @@
   createApp({
     data() {
       return {
+        isIOS: navigator.userAgent.match(/iPhone/i),
+        isAndroid: navigator.userAgent.match(/Android/i),
         selectedCategory: "featured",
         selectedSpirit: "all",
-        outOfStockIngredients: ["grapes", "sweet vermouth"],
+        outOfStockIngredients: ["grapes", "mint", "basil"],
         drinks: [
           {
             name: "Whiskey Sour",
@@ -151,7 +171,7 @@
           {
             name: "Spicy Mezcal Margarita",
             description:
-              "Mezcal, Cointreau, lime juice, agave, habanero, tajín",
+              "Mezcal, lime juice, agave, habanero, tajín",
             tags: ["featured", "sour"],
             spirit: "mezcal",
             imageUrl: "/cocktail-menu/img/spicy-mezcal-margarita.jpg",
@@ -272,14 +292,14 @@
           },
           {
             name: "Paper Plane",
-            description: "Bourbon, Aperol, Averna amaro, lemon",
+            description: "Bourbon, Aperol, Averna, lemon",
             tags: ["sour", "featured", "bitter"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/paper-plane.jpg",
           },
           {
             name: "Division Bell",
-            description: "Mezcal, Aperol, Luxardo liqueur, lime",
+            description: "Mezcal, Aperol, Luxardo, lime",
             tags: ["sour", "featured"],
             spirit: "bourbon",
             imageUrl: "/cocktail-menu/img/division-bell.jpg",
@@ -362,6 +382,15 @@
           }
         }
         return false;
+      },
+      order(drink) {
+        window.open(
+          `sms://17034341601/${
+            this.isIOS ? "?" : "&"
+          }body=encodeURIComponent("I'd like to order a ${
+            drink.name
+          }."),'_blank'`
+        );
       },
     },
   }).mount("#app");
