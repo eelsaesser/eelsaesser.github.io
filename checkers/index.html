@@ -112,7 +112,6 @@
     mounted() {
       this.width = Math.min(window.innerWidth, window.innerHeight) - 12;
     },
-    computed: {},
     methods: {
       isValidMove(x, y, color, board, scoringInProgress) {
         if (x < 0 || x > 7 || y < 0 || y > 7 || this.animationInProgress)
