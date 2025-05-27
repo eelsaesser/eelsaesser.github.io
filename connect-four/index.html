@@ -264,8 +264,8 @@
         // diagonal down
         for (
           let startRow = Math.min(5, row + Math.min(3, column));
-          startRow <= Math.min(3, row);
-          startRow++
+          startRow >= Math.min(3, row);
+          startRow--
         ) {
           const startCol = column - (startRow - row);
           if (startCol > 3) continue;
