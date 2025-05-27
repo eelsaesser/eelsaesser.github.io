@@ -65,7 +65,7 @@
               <h5 class="modal-title" id="exampleModalLabel">Game Over</h5>
             </div>
             <div class="modal-body">
-              You {{ isWinner(board, "red") ? "won" : "lost" }}!
+              You {{ isWinner("red") ? "won" : "lost" }}!
             </div>
             <div class="modal-footer">
               <button
@@ -126,8 +126,8 @@
           this.selectedColumn = null;
           this.currentRow = null;
           this.board[x].push("red");
-          // todo: check if red won, if so show modal
-          if (this.isWinner(this.board, "red")) {
+          // check if red won, if so show modal
+          if (this.isWinner("red")) {
             this.animationInProgress = false;
             new bootstrap.Modal(document.getElementById("winner-modal"), {
               backdrop: "static",
@@ -136,38 +136,41 @@
           }
 
           // yellow move
-          this.currentMove = "yellow";
-          // get available options
-          const possibleMoves = this.getPossibleMoves(this.board);
-          // get score for each option
-          for (const move of possibleMoves) {
-            move.score = this.getScore(
-              JSON.parse(JSON.stringify(this.board)),
-              move.column,
-              "yellow",
-              4
-            );
-          }
-          // choose best option
-          const bestMove = possibleMoves.find(
-            (d) => d.score === Math.max(...possibleMoves.map((d) => d.score))
-          ).column;
-
-          // animate yellow move
-          this.animateMove(bestMove);
-          this.selectedColumn = bestMove;
+          // use setTimeout so red animation finishes before calculating move
           setTimeout(() => {
-            this.board[bestMove].push("yellow");
-            this.animationInProgress = false;
-            if (this.isWinner(this.board, "yellow")) {
-              this.animationInProgress = false;
-              new bootstrap.Modal(document.getElementById("winner-modal"), {
-                backdrop: "static",
-              }).show();
-              return;
+            this.currentMove = "yellow";
+            // get available options
+            const possibleMoves = this.getPossibleMoves(this.board);
+            // get score for each option
+            for (const move of possibleMoves) {
+              move.score = this.getScore(
+                JSON.parse(JSON.stringify(this.board)),
+                move.column,
+                "yellow",
+                4
+              );
             }
-            this.currentMove = "red";
-          }, this.animationDuration * 5 - this.board[bestMove].length);
+            // choose best option
+            const bestMove = possibleMoves.find(
+              (d) => d.score === Math.max(...possibleMoves.map((d) => d.score))
+            ).column;
+
+            // animate yellow move
+            this.animateMove(bestMove);
+            this.selectedColumn = bestMove;
+            setTimeout(() => {
+              this.board[bestMove].push("yellow");
+              this.animationInProgress = false;
+              if (this.isWinner("yellow")) {
+                this.animationInProgress = false;
+                new bootstrap.Modal(document.getElementById("winner-modal"), {
+                  backdrop: "static",
+                }).show();
+                return;
+              }
+              this.currentMove = "red";
+            }, this.animationDuration * 5 - this.board[bestMove].length);
+          }, 10);
         }, this.animationDuration * 5 - this.board[x].length);
       },
       getPossibleMoves(board) {
@@ -277,42 +280,42 @@
           }, this.animationDuration * i);
         }
       },
-      isWinner(board, color) {
-        for (let column = 0; column < board.length; column++) {
-          for (let row = 0; row < board[column].length; row++) {
-            if (board[column][row] === color) {
+      isWinner(color) {
+        for (let column = 0; column < this.board.length; column++) {
+          for (let row = 0; row < this.board[column].length; row++) {
+            if (this.board[column][row] === color) {
               // up
               if (
                 row < 3 &&
-                board[column][row + 1] === color &&
-                board[column][row + 2] === color &&
-                board[column][row + 3] === color
+                this.board[column][row + 1] === color &&
+                this.board[column][row + 2] === color &&
+                this.board[column][row + 3] === color
               )
                 return true;
               // right
               if (
                 column < 4 &&
-                board[column + 1][row] === color &&
-                board[column + 2][row] === color &&
-                board[column + 3][row] === color
+                this.board[column + 1][row] === color &&
+                this.board[column + 2][row] === color &&
+                this.board[column + 3][row] === color
               )
                 return true;
               // diagonal down
               if (
                 row > 2 &&
                 column < 4 &&
-                board[column + 1][row - 1] === color &&
-                board[column + 2][row - 2] === color &&
-                board[column + 3][row - 3] === color
+                this.board[column + 1][row - 1] === color &&
+                this.board[column + 2][row - 2] === color &&
+                this.board[column + 3][row - 3] === color
               )
                 return true;
               // diagonal up
               if (
                 row < 3 &&
                 column < 4 &&
-                board[column + 1][row + 1] === color &&
-                board[column + 2][row + 2] === color &&
-                board[column + 3][row + 3] === color
+                this.board[column + 1][row + 1] === color &&
+                this.board[column + 2][row + 2] === color &&
+                this.board[column + 3][row + 3] === color
               )
                 return true;
             }
