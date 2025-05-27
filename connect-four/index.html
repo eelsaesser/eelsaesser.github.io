@@ -52,8 +52,14 @@
         </div>
       </div>
 
-      <div class="modal fade" id="winner-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" style="width: 300px">
+      <div
+        class="modal fade"
+        id="winner-modal"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog ms-auto me-auto mt-5" style="width: 300px">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Game Over</h5>
@@ -137,6 +143,7 @@
           for (const move of possibleMoves) {
             move.score = this.getScore(
               JSON.parse(JSON.stringify(this.board)),
+              move.column,
               "yellow",
               4
             );
@@ -152,6 +159,13 @@
           setTimeout(() => {
             this.board[bestMove].push("yellow");
             this.animationInProgress = false;
+            if (this.isWinner(this.board, "yellow")) {
+              this.animationInProgress = false;
+              new bootstrap.Modal(document.getElementById("winner-modal"), {
+                backdrop: "static",
+              }).show();
+              return;
+            }
             this.currentMove = "red";
           }, this.animationDuration * 5 - this.board[bestMove].length);
         }, this.animationDuration * 5 - this.board[x].length);
@@ -165,9 +179,133 @@
           .filter((d) => d.length < 6)
           .map((d) => ({ column: d.column }));
       },
-      getScore(board, color, depth) {
-        // todo
-        return Math.random();
+      getScore(board, column, color, depth) {
+        board[column].push(color);
+        const row = board[column].length - 1;
+        let score = 0;
+
+        const opposingColor = color === "red" ? "yellow" : "red";
+
+        // horizontal
+        let hasWinningMove = false;
+        for (
+          let startCol = Math.max(0, column - 3);
+          startCol <= Math.min(3, column);
+          startCol++
+        ) {
+          const four = [
+            board[startCol][row],
+            board[startCol + 1][row],
+            board[startCol + 2][row],
+            board[startCol + 3][row],
+          ];
+          // potential connect four blocked by opponent
+          if (four.indexOf(opposingColor) > -1) continue;
+          // winning move
+          if (four.indexOf(undefined) === -1) {
+            hasWinningMove = true;
+            score += 100;
+            break;
+          }
+          const numOfColor = four.filter((d) => d === color).length;
+          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+        }
+
+        // vertical
+        for (
+          let startRow = Math.max(0, row - 3);
+          startRow <= Math.min(2, row);
+          startRow++
+        ) {
+          const four = [
+            board[column][startRow],
+            board[column][startRow + 1],
+            board[column][startRow + 2],
+            board[column][startRow + 3],
+          ];
+          // potential connect four blocked by opponent
+          if (four.indexOf(opposingColor) > -1) continue;
+          // winning move
+          if (four.indexOf(undefined) === -1) {
+            hasWinningMove = true;
+            score += 100;
+            break;
+          }
+          const numOfColor = four.filter((d) => d === color).length;
+          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+        }
+
+        // diagonal up
+        for (
+          let startRow = Math.max(0, row - Math.min(3, column));
+          startRow <= Math.min(2, row);
+          startRow++
+        ) {
+          const startCol = column - (row - startRow);
+          if (startCol > 3) continue;
+          const four = [
+            board[startCol][startRow],
+            board[startCol + 1][startRow + 1],
+            board[startCol + 2][startRow + 2],
+            board[startCol + 3][startRow + 3],
+          ];
+          // potential connect four blocked by opponent
+          if (four.indexOf(opposingColor) > -1) continue;
+          // winning move
+          if (four.indexOf(undefined) === -1) {
+            hasWinningMove = true;
+            score += 100;
+            break;
+          }
+          const numOfColor = four.filter((d) => d === color).length;
+          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+        }
+
+        // diagonal down
+        for (
+          let startRow = Math.min(5, row + Math.min(3, column));
+          startRow <= Math.min(3, row);
+          startRow++
+        ) {
+          const startCol = column - (startRow - row);
+          if (startCol > 3) continue;
+          const four = [
+            board[startCol][startRow],
+            board[startCol + 1][startRow - 2],
+            board[startCol + 2][startRow - 2],
+            board[startCol + 3][startRow - 3],
+          ];
+          // potential connect four blocked by opponent
+          if (four.indexOf(opposingColor) > -1) continue;
+          // winning move
+          if (four.indexOf(undefined) === -1) {
+            hasWinningMove = true;
+            score += 100;
+            break;
+          }
+          const numOfColor = four.filter((d) => d === color).length;
+          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+        }
+
+        if (!depth || hasWinningMove) return score;
+
+        // subtract counter move score
+        const possibleMoves = this.getPossibleMoves(board);
+        // get score for each option
+        for (const move of possibleMoves) {
+          move.score = this.getScore(
+            JSON.parse(JSON.stringify(board)),
+            move.column,
+            color === "yellow" ? "red" : "yellow",
+            depth - 1
+          );
+        }
+        // choose best counter-move
+        const counterMove = possibleMoves.find(
+          (d) => d.score === Math.max(...possibleMoves.map((d) => d.score))
+        );
+
+        return score - (counterMove ? counterMove.score : 0);
       },
       animateMove(column) {
         this.animationInProgress = true;
