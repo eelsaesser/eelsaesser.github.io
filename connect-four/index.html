@@ -193,22 +193,8 @@
           startCol <= Math.min(3, column);
           startCol++
         ) {
-          const four = [
-            board[startCol][row],
-            board[startCol + 1][row],
-            board[startCol + 2][row],
-            board[startCol + 3][row],
-          ];
-          // potential connect four blocked by opponent
-          if (four.indexOf(opposingColor) > -1) continue;
-          // winning move
-          if (four.indexOf(undefined) === -1) {
-            hasWinningMove = true;
-            score += 100;
-            break;
-          }
-          const numOfColor = four.filter((d) => d === color).length;
-          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+          score += this.getSubScore(board, color, startCol, 1, row, 0);
+          if (score >= 100) return 100;
         }
 
         // vertical
@@ -217,22 +203,8 @@
           startRow <= Math.min(2, row);
           startRow++
         ) {
-          const four = [
-            board[column][startRow],
-            board[column][startRow + 1],
-            board[column][startRow + 2],
-            board[column][startRow + 3],
-          ];
-          // potential connect four blocked by opponent
-          if (four.indexOf(opposingColor) > -1) continue;
-          // winning move
-          if (four.indexOf(undefined) === -1) {
-            hasWinningMove = true;
-            score += 100;
-            break;
-          }
-          const numOfColor = four.filter((d) => d === color).length;
-          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+          score += this.getSubScore(board, color, column, 0, startRow, 1);
+          if (score >= 100) return 100;
         }
 
         // diagonal up
@@ -243,22 +215,8 @@
         ) {
           const startCol = column - (row - startRow);
           if (startCol > 3) continue;
-          const four = [
-            board[startCol][startRow],
-            board[startCol + 1][startRow + 1],
-            board[startCol + 2][startRow + 2],
-            board[startCol + 3][startRow + 3],
-          ];
-          // potential connect four blocked by opponent
-          if (four.indexOf(opposingColor) > -1) continue;
-          // winning move
-          if (four.indexOf(undefined) === -1) {
-            hasWinningMove = true;
-            score += 100;
-            break;
-          }
-          const numOfColor = four.filter((d) => d === color).length;
-          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+          score += this.getSubScore(board, color, startCol, 1, startRow, 1);
+          if (score >= 100) return 100;
         }
 
         // diagonal down
@@ -269,22 +227,8 @@
         ) {
           const startCol = column - (startRow - row);
           if (startCol > 3) continue;
-          const four = [
-            board[startCol][startRow],
-            board[startCol + 1][startRow - 1],
-            board[startCol + 2][startRow - 2],
-            board[startCol + 3][startRow - 3],
-          ];
-          // potential connect four blocked by opponent
-          if (four.indexOf(opposingColor) > -1) continue;
-          // winning move
-          if (four.indexOf(undefined) === -1) {
-            hasWinningMove = true;
-            score += 100;
-            break;
-          }
-          const numOfColor = four.filter((d) => d === color).length;
-          score += numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
+          score += this.getSubScore(board, color, startCol, 1, startRow, -1);
+          if (score >= 100) return 100;
         }
 
         if (!depth || hasWinningMove) return score;
@@ -306,6 +250,23 @@
         );
 
         return score - (counterMove ? counterMove.score : 0);
+      },
+      getSubScore(board, color, startCol, colInc, startRow, rowInc) {
+        const opposingColor = color === "red" ? "yellow" : "red";
+        const four = [
+          board[startCol][startRow],
+          board[startCol + colInc][startRow + rowInc],
+          board[startCol + 2 * colInc][startRow + 2 * rowInc],
+          board[startCol + 3 * colInc][startRow + 3 * rowInc],
+        ];
+        // potential connect four blocked by opponent
+        if (four.indexOf(opposingColor) > -1) return 0;
+        // winning move
+        if (four.indexOf(undefined) === -1) {
+          return 100;
+        }
+        const numOfColor = four.filter((d) => d === color).length;
+        return numOfColor === 3 ? 10 : numOfColor === 2 ? 1 : 0;
       },
       animateMove(column) {
         this.animationInProgress = true;
